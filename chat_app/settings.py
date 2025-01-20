@@ -35,6 +35,9 @@ INSTALLED_APPS = [
     # My app
     'chat',
 
+    # Rest Framework
+    'rest_framework',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
