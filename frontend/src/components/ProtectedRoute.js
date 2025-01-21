@@ -3,10 +3,12 @@ import { AuthContext } from '../contexts/AuthContext';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute = () => {
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
 
-  if(!user) return <Navigate to="/login"/>
-  return <Outlet/>
+  if (!token) return <Navigate to="/login" />;
+  if (!user) return <div>Loading...</div>; 
+
+  return <Outlet />;
 }
 
 export default ProtectedRoute;

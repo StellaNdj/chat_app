@@ -33,6 +33,7 @@ export const loginUser = async ({ username, password }) => {
 
 // Retrieve user details
 export const userDetails = async ({token}) => {
+  console.log(token);
   try {
     const response = await axios.get(`${APIroot}/user/`,
       {
