@@ -34,7 +34,8 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # My app
     'chat',
-
+    # Cors,
+    "corsheaders",
     # Rest Framework
     'rest_framework',
 
@@ -60,6 +61,8 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+    # cors
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,6 +70,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000'
 ]
 
 ROOT_URLCONF = 'chat_app.urls'
