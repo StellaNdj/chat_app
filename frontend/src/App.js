@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import ThemeProvider from './contexts/ThemeContext';
+import Register from './pages/Register';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Routes>
               <Route path='/' element={<Homepage/>}/>
               <Route path='/login' element={<Login/>}/>
+              <Route path='/register' element={<Register/>}/>
               <Route element={<ProtectedRoute/>}>
                 <Route path='/dashboard' element={<Dashboard/>}/>
               </Route>
