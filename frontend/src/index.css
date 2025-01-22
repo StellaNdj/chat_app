@@ -21,3 +21,12 @@ body.dark-theme {
   background-color: rgb(15, 15, 39);
   color: white;
 }
+
+.main-btn {
+  border: 1px solid #004aad;
+}
+
+.main-btn:hover {
+  background-color: #004aad;
+  color: white;
+}

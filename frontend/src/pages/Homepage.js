@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Button from "../components/Button";
 
 const Homepage = () => {
 
@@ -11,7 +12,9 @@ const Homepage = () => {
         </div>
 
         <p className="text-lg">Send messages to all your friends through our chat app.</p>
-        <Link to='/login' className="text-lg border border-black p-4 mt-4 w-28">Join now</Link>
+        <Link to='/login'>
+          <Button text='Join now'/>
+        </Link>
       </div>
 
       <img src='/chat_mu.png' alt='home-img' className="w-1/2"/>

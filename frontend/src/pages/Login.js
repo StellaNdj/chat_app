@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import Button from "../components/Button";
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -37,7 +38,7 @@ const Login = () => {
                 placeholder="Ex: Gin"
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
@@ -49,12 +50,12 @@ const Login = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
             <div className="flex justify-center my-4">
-              <button type="submit" className="border border-black hover:bg-blue-950 p-2">Login</button>
+              <Button type={'submit'} text={'Login'}/>
             </div>
           </form>
         </div>

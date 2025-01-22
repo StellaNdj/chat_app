@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
+import Button from '../components/Button';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -38,7 +39,7 @@ const Register = () => {
                 placeholder="Ex: greatest_sorcerer"
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
@@ -50,7 +51,7 @@ const Register = () => {
                 placeholder="Ex: Gojo"
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
@@ -62,7 +63,7 @@ const Register = () => {
                 placeholder="Ex: Satoru"
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
@@ -74,7 +75,7 @@ const Register = () => {
                 placeholder="Ex: gojo@jjk.com"
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
@@ -86,17 +87,17 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black rounded-lg"
               />
             </div>
 
             <div className="flex justify-center my-4">
-              <button type="submit" className="border border-black hover:bg-blue-950 p-2">Register</button>
+              <Button type='submit' text='Register'/>
             </div>
           </form>
         </div>
 
-        <p className="text-center text-gray-600">Already have an account? <Link to='/register' className="hover:underline">Log in</Link> </p>
+        <p className="text-center text-gray-600">Already have an account? <Link to='/login' className="hover:underline">Log in</Link> </p>
 
       </div>
     </>
