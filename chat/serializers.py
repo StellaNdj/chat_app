@@ -37,7 +37,25 @@ class MessageSerializer(serializers.ModelSerializer):
 # Conversation serializer
 class ConversationSerializer(serializers.ModelSerializer):
     messages = MessageSerializer(many=True, read_only=True)
+    participants = UserSerializer(many=True, read_only=True)
+    other_user = serializers.SerializerMethodField()
+    last_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'created_at', 'messages']
+        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message']
+
+    def get_other_user(self, obj):
+        requesting_user = self.context['request'].user
+        other_user = obj.participants.exclude(id=requesting_user.id).first()
+        return other_user.username if other_user else None
+
+    def get_last_message(self, obj):
+        last_message = obj.messages.last()
+
+        if last_message:
+            return {
+                "content": last_message.content,
+                "timestamp": last_message.timestamp
+            }
+        return None

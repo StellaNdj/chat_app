@@ -15,7 +15,7 @@ export const register = async ({ username, first_name, last_name, email, passwor
     const loginResponse = await loginUser({username, password});
     return { registration: response.data, token: loginResponse }
   } catch (error) {
-    console.log('Error while registering and logging in the user');
+    console.log('Error while registering and logging in the user', error);
   }
 }
 
@@ -27,13 +27,12 @@ export const loginUser = async ({ username, password }) => {
     );
     return response.data;
   } catch (error) {
-    console.log('Error while generating token via login');
+    console.log('Error while generating token via login', error);
   }
 }
 
 // Retrieve user details
 export const userDetails = async ({token}) => {
-  console.log(token);
   try {
     const response = await axios.get(`${APIroot}/user/`,
       {
@@ -44,6 +43,23 @@ export const userDetails = async ({token}) => {
     );
     return response.data;
   } catch (error) {
-    console.log('Error while retrieving user details')
+    console.log('Error while retrieving user details', error)
+  }
+}
+
+// Get the user conversations
+export const getConversations = async ({token}) => {
+  try {
+    const response = await axios.get(`${APIroot}/conversations/`,
+      {
+        headers : {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Error while retrieving conversations', error)
   }
 }

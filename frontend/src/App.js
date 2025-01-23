@@ -14,12 +14,16 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <Routes>
+            {/* Public routes */}
             <Route path='/' element={<Homepage/>}/>
             <Route path='/login' element={<Login/>}/>
             <Route path='/register' element={<Register/>}/>
+
+            {/* Private routes */}
             <Route element={<ProtectedRoute/>}>
               <Route path='/dashboard' element={<Dashboard/>}/>
             </Route>
+
           </Routes>
         </ThemeProvider>
       </AuthProvider>
