@@ -1,10 +1,20 @@
+import Contact from "../components/Contact";
+import Conversation from "../components/Conversation";
 import Navbar from "../components/Navbar";
 
 const Dashboard = () => {
   return(
     <>
-      <Navbar/>
-      <h1>Dashboard</h1>
+      <div className="flex justify-around ">
+        {/* Navbar section */}
+        <Navbar/>
+
+        {/* Contacts */}
+        <Contact/>
+
+        {/* Message / Conversation */}
+        <Conversation/>
+      </div>
     </>
   )
 }

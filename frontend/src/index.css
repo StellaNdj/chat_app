@@ -12,13 +12,18 @@ code {
     monospace;
 }
 
-body.light-thme {
+body.light-theme, .light {
   background-color: white;
   color: black
 }
 
-body.dark-theme {
+body.dark-theme, .dark {
   background-color: rgb(15, 15, 39);
+  color: white;
+}
+
+.main-bg {
+  background-color: #004aad;
   color: white;
 }
 
@@ -29,4 +34,9 @@ body.dark-theme {
 .main-btn:hover {
   background-color: #004aad;
   color: white;
+}
+
+.section {
+  border: 1px solid #90caf5;
+  box-shadow: -1px 1px 1px #7db0f4;
 }

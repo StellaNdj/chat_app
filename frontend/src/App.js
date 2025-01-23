@@ -10,22 +10,20 @@ import Register from './pages/Register';
 
 function App() {
   return (
-    <>
-      <Router>
-        <AuthProvider>
-          <ThemeProvider>
-            <Routes>
-              <Route path='/' element={<Homepage/>}/>
-              <Route path='/login' element={<Login/>}/>
-              <Route path='/register' element={<Register/>}/>
-              <Route element={<ProtectedRoute/>}>
-                <Route path='/dashboard' element={<Dashboard/>}/>
-              </Route>
-            </Routes>
-          </ThemeProvider>
-        </AuthProvider>
-      </Router>
-    </>
+    <Router>
+      <AuthProvider>
+        <ThemeProvider>
+          <Routes>
+            <Route path='/' element={<Homepage/>}/>
+            <Route path='/login' element={<Login/>}/>
+            <Route path='/register' element={<Register/>}/>
+            <Route element={<ProtectedRoute/>}>
+              <Route path='/dashboard' element={<Dashboard/>}/>
+            </Route>
+          </Routes>
+        </ThemeProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 
