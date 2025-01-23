@@ -3,15 +3,16 @@ import ConversationList from "../components/ConversationList";
 import Navbar from "../components/Navbar";
 import { AuthContext } from "../contexts/AuthContext";
 import { getConversations } from "../endpoints";
+import ConversationSpace from "../components/ConversationSpace";
 
 const Dashboard = () => {
   const [conversations, setConversations] = useState([]);
   const { token } = useContext(AuthContext);
   const [selectedConversation, setSelectedConversation] = useState();
+  const [conversationOpen, setConversationOpen] = useState(false);
 
   useEffect(() => {
     const fetchConversationData = async () => {
-      console.log(token);
       const conversationData = await getConversations({token});
       setConversations(conversationData);
     };
@@ -21,6 +22,11 @@ const Dashboard = () => {
   const handleConversationSelected = (conversation) => {
     setSelectedConversation(conversation);
     console.log('Selected convo:', conversation);
+    setConversationOpen(true);
+  }
+
+  const handleClose = () => {
+    setConversationOpen(false);
   }
 
   return(
@@ -37,10 +43,18 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Message / Conversation */}
+        {/* Message / Conversation Space */}
         <div className="flex-grow section rounded-lg p-4 m-4">
+          {conversationOpen ? (
+            <ConversationSpace conversation={selectedConversation} handleClose={handleClose} />
+          ) : (
 
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <p>Select a conversation to start chatting.</p>
+            </div>
+          )}
         </div>
+
       </div>
     </>
   )
