@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "corsheaders",
     # Rest Framework
     'rest_framework',
+    # Channels
+    'channels',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +53,14 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+}
+
+# Channels configs
+ASGI_APPLICATION = 'chat_app.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
 }
 
 # Simple jwt one week lifetime

@@ -62,3 +62,23 @@ export const getConversations = async ({token}) => {
     console.log('Error while retrieving conversations', error)
   }
 }
+
+// Send a new message
+export const newMessage = async ({token, participants, content}) => {
+
+  try {
+    const response = await axios.post(`${APIroot}/messages/`,
+      { participants, content },
+      {
+        headers : {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
+
+  } catch (error) {
+    console.log('Error while sending a new message', error)
+  }
+}

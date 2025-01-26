@@ -11,17 +11,17 @@ const Dashboard = () => {
   const [selectedConversation, setSelectedConversation] = useState();
   const [conversationOpen, setConversationOpen] = useState(false);
 
+  const fetchConversationData = async () => {
+    const conversationData = await getConversations({token});
+    setConversations(conversationData);
+  };
+
   useEffect(() => {
-    const fetchConversationData = async () => {
-      const conversationData = await getConversations({token});
-      setConversations(conversationData);
-    };
     fetchConversationData();
   }, [])
 
   const handleConversationSelected = (conversation) => {
     setSelectedConversation(conversation);
-    console.log('Selected convo:', conversation);
     setConversationOpen(true);
   }
 
