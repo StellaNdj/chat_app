@@ -2,7 +2,6 @@ import { formatDistance } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { newMessage } from '../endpoints';
 
 const ConversationSpace = ({ conversation, handleClose }) => {
   const { user, token } = useContext(AuthContext);
@@ -17,13 +16,14 @@ const ConversationSpace = ({ conversation, handleClose }) => {
     const roomName = conversation.id;
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomName}/`);
     setSocket(ws);
+    console.log(ws);
 
     // Incoming messages
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       console.log("Received WebSocket message:", data);
-      
-      if (data.message) {
+
+      if (data.content) {
         setMessages((prevMessages) => [...prevMessages, data]);
       }
     };
@@ -41,13 +41,11 @@ const ConversationSpace = ({ conversation, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // await newMessage({token, participants: [formData.participants], content: formData.content});
 
     // Send messages via WebSocket
     if(socket && formData.content.trim() !== "") {
       socket.send(
         JSON.stringify({
-
           message: formData.content,
           sender: user[0].id,
         })

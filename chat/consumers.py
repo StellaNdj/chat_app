@@ -1,6 +1,9 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from datetime import datetime
+from .models import Message, Conversation
+from django.contrib.auth.models import User
+from channels.db import database_sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -23,32 +26,51 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
+        print("WebSocket message received:", text_data)
         data = json.loads(text_data)
-        message = data['message']
-        sender = data['sender']
-        timestamp = datetime.now().isoformat()
+        message_content = data['message']
+        sender_id = data['sender']
+
+        # Save the message to the database
+        conversation = await self.get_conversation(self.room_name)
+        sender = await self.get_user(sender_id)
+
+        message = await self.create_message(conversation, sender, message_content)
+
+        print("Broadcasting message:", message.content)
 
         # Broadcast the message to the group
-
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message,
-                'sender': sender,
-                'timestamp': timestamp,
+                'message': {
+                    'content': message.content,
+                    'sender': message.sender.id,
+                    'timestamp': message.timestamp.isoformat(),
+                },
             }
         )
 
     async def chat_message(self, event):
         message = event['message']
-        sender = event['sender']
-        timestamp = event['timestamp']
 
-        # Send the message to WebSocket
+        # Send the structured message to WebSocket
+        await self.send(text_data=json.dumps(message))
 
-        await self.send(text_data=json.dumps({
-            'message': message,
-            'sender': sender,
-            'timestamp': timestamp,
-        }))
+    # Database operations must use `database_sync_to_async`
+    @database_sync_to_async
+    def get_conversation(self, room_name):
+        return Conversation.objects.get(id=room_name)
+
+    @database_sync_to_async
+    def get_user(self, user_id):
+        return User.objects.get(id=user_id)
+
+    @database_sync_to_async
+    def create_message(self, conversation, sender, content):
+        return Message.objects.create(
+            conversation=conversation,
+            sender=sender,
+            content=content
+        )

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     # Channels
     'channels',
+    # Daphne
+    'daphne',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,8 +57,9 @@ REST_FRAMEWORK = {
     )
 }
 
-# Channels configs
+# Channels configs / Daphne
 ASGI_APPLICATION = 'chat_app.asgi.application'
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer'
