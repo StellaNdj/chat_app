@@ -1,12 +1,12 @@
 from django.shortcuts import render
-from .models import Message, Conversation
+from .models import Message, Conversation, UserProfile
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, ConversationSerializer, MessageSerializer, UserDetailsSerializer
+from .serializers import UserSerializer, ConversationSerializer, MessageSerializer, UserDetailsSerializer, UserProfileSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
-
+from rest_framework.generics import RetrieveUpdateAPIView
 # Create your views here.
 
 # Registration view
@@ -29,6 +29,30 @@ class UserDetailsViewSet(viewsets.ModelViewSet):
             "username": user.username,
             "email": user.email
         })
+
+
+
+# User Profile view
+class UserProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = UserProfile.objects.all()
+
+    def get_queryset(self):
+        return UserProfile.objects.filter(user=self.request.user)
+
+    def retrieve(self, request, *args, **kwargs):
+        profile = UserProfile.objects.filter(user=self.request.user)
+        serializer = UserProfileSerializer(profile)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        profile = UserProfile.objects.get(user=self.request.user)
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 
 class MessageViewSet(viewsets.ModelViewSet):

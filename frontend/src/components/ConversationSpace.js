@@ -4,7 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const ConversationSpace = ({ conversation, handleClose }) => {
-  const { user, token } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState(conversation.messages)
   const [formData, setFormData] = useState({
     participants: conversation.other_user.id,
@@ -13,10 +13,13 @@ const ConversationSpace = ({ conversation, handleClose }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
+    setMessages(conversation.messages)
+  }, [conversation]);
+
+  useEffect(() => {
     const roomName = conversation.id;
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomName}/`);
     setSocket(ws);
-    console.log(ws);
 
     // Incoming messages
     ws.onmessage = (event) => {
@@ -59,23 +62,26 @@ const ConversationSpace = ({ conversation, handleClose }) => {
   return(
     <>
       <div>
-        <div className='border-b border-gray-300 flex'>
-          <button onClick={handleClose}><XMarkIcon className='size-4' /> </button>
-          <h3 className='font-bold'>{conversation.other_user.username}</h3>
+        <div className='border-b border-gray-300 flex p-2'>
+          <button onClick={handleClose}><XMarkIcon className='size-4'/> </button>
+          <h3 className='font-bold mx-2'>{conversation.other_user.username}</h3>
         </div>
         <>
-          {messages.map((message) =>
-            <div key={message.id} className={`grid ${message.sender === user[0].id ? 'justify-end' : 'justify-start'}`} >
-              <p className={ `rounded-lg m-4 mb-1 p-2 w-fit ${message.sender === user[0].id ? 'bg-blue-600 text-right' : 'bg-gray-300'}`}>{message.content}</p>
-              <p className='text-xs text-gray-300 mx-4 '>
-                {formatDistance(new Date(message.timestamp), new Date(), {
-                  addSuffix: true,
-                })}
-              </p>
-            </div>
-          )}
+          <div className='overflow-y-auto h-96  p-2 space-y-4'>
+            {messages.map((message) =>
+              <div key={message.id} className={`grid ${message.sender === user[0].id ? 'justify-end' : 'justify-start'}`} >
+                <p className={ `rounded-lg m-4 mb-1 p-2 w-fit ${message.sender === user[0].id ? 'bg-blue-600 text-right' : 'bg-gray-400'}`}>{message.content}</p>
+                <p className={`text-xs text-gray-300 mx-4 ${message.sender === user[0].id ? 'text-end' : 'text-start'}`}>
+                  {formatDistance(new Date(message.timestamp), new Date(), {
+                    addSuffix: true,
+                  })}
+                </p>
+              </div>
+            )}
+          </div>
 
-          <form onSubmit={handleSubmit}>
+
+          <form onSubmit={handleSubmit} className='flex justify-between'>
             <input
               name='content'
               value={formData.content}

@@ -11,6 +11,8 @@ const Dashboard = () => {
   const [selectedConversation, setSelectedConversation] = useState();
   const [conversationOpen, setConversationOpen] = useState(false);
 
+  console.log(token);
+  
   const fetchConversationData = async () => {
     const conversationData = await getConversations({token});
     setConversations(conversationData);
@@ -44,7 +46,7 @@ const Dashboard = () => {
         </div>
 
         {/* Message / Conversation Space */}
-        <div className="flex-grow section rounded-lg p-4 m-4">
+        <div className="flex-grow section rounded-lg p-4 m-4 dash-height">
           {conversationOpen ? (
             <ConversationSpace conversation={selectedConversation} handleClose={handleClose} />
           ) : (

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Message, Conversation
+from .models import Message, Conversation, UserProfile
 from django.contrib.auth.models import User
 
 # User serializer
@@ -65,3 +65,9 @@ class ConversationSerializer(serializers.ModelSerializer):
                 "timestamp": last_message.timestamp
             }
         return None
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'image', 'is_online']
