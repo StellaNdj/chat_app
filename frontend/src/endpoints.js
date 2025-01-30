@@ -82,3 +82,8 @@ export const newMessage = async ({token, participants, content}) => {
     console.log('Error while sending a new message', error)
   }
 }
+
+// Get the logged in user profile
+
+// Get the public profiles
+

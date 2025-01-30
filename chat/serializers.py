@@ -40,10 +40,11 @@ class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
     other_user = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
+    user_image = serializers.CharField(source='user.userprofile.image.url', read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message']
+        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message', 'user_image']
 
     def get_other_user(self, obj):
         requesting_user = self.context['request'].user
@@ -66,8 +67,15 @@ class ConversationSerializer(serializers.ModelSerializer):
             }
         return None
 
+# Profiles
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = UserProfile
         fields = ['user', 'image', 'is_online']
+
+class PublicProfileUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    class Meta:
+        model = UserProfile
+        fields = ['username', 'image', 'is_online']

@@ -1,12 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Message, Conversation, UserProfile
 from django.contrib.auth.models import User
-from .serializers import UserSerializer, ConversationSerializer, MessageSerializer, UserDetailsSerializer, UserProfileSerializer
+from .serializers import UserSerializer, ConversationSerializer, MessageSerializer, UserDetailsSerializer, UserProfileSerializer, PublicProfileUserSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.viewsets import ReadOnlyModelViewSet
 # Create your views here.
 
 # Registration view
@@ -31,20 +31,13 @@ class UserDetailsViewSet(viewsets.ModelViewSet):
         })
 
 
-
 # User Profile view
 class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
-    queryset = UserProfile.objects.all()
 
     def get_queryset(self):
-        return UserProfile.objects.filter(user=self.request.user)
-
-    def retrieve(self, request, *args, **kwargs):
-        profile = UserProfile.objects.filter(user=self.request.user)
-        serializer = UserProfileSerializer(profile)
-        return Response(serializer.data)
+        return UserProfile.objects.filter(user=self.request.user.id)
 
     def update(self, request, *args, **kwargs):
         profile = UserProfile.objects.get(user=self.request.user)
@@ -53,6 +46,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer.save()
         return Response(serializer.data)
 
+# Public Profile view
+class PublicUserProfileViewSet(ReadOnlyModelViewSet):
+    serializer_class = PublicProfileUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        username = self.request.query_params.get('username')
+        return UserProfile.objects.filter(user__username=username)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
