@@ -65,13 +65,15 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       {!profile && newUser ? (
         <div className="border-b p-2">
           <h3 className="font-bold">{newUser.username}</h3>
-          <p>Start a conversation by sending a message</p>
         </div>
       ) : (
         <div className="border-b flex p-2">
           <button onClick={handleClose}><XMarkIcon className="size-4" /></button>
-          <img src={`http://localhost:8000/api${profile?.image_url}`} className="w-10 h-10 rounded-full" alt='Profile pic' />
-          <h3 className="font-bold mx-2">{profile?.username}</h3>
+          <img src={`http://localhost:8000/api${profile?.image_url}`} className="w-10 h-10 rounded-full object-cover shadow-sm" alt='Profile pic' />
+          <div className='mx-2' >
+            <h3 className="font-bold">{profile?.username}</h3>
+            {profile?.is_online ? <p className='text-xs text-green-600'>online</p> : <p className='text-xs text-gray-600'>offline</p>}
+          </div>
         </div>
       )}
 
