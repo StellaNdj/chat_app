@@ -159,10 +159,12 @@ class SearchView(APIView):
 
         if conversation:
             return Response({
+                "type": "conversation",
                 "conversation": ConversationSerializer(conversation, context={"request": request}).data
             })
 
         # If no conversation exists, return user details so frontend can start one
         return Response({
+            "type": "new_user",
             "user": UserSerializer(searched_user).data
         })
