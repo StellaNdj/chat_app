@@ -113,6 +113,23 @@ export const publicProfiles = async ({token, username}) => {
     );
     return response.data[0];
   } catch (error) {
-    console.log('Error while fetching user profile')
+    console.log('Error while fetching user profile', error)
+  }
+}
+
+// Search by username
+export const search = async ({token, username}) => {
+  try {
+    const response = await axios.get(`${APIroot}/search/?q=${username}`,
+      {
+        headers : {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Error while searching', error)
   }
 }

@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from django.db.models import Q
+from rest_framework.views import APIView
 # Create your views here.
 
 # Registration view
@@ -131,3 +133,36 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Conversation.objects.filter(participants=self.request.user)
+
+class SearchView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("q", "").strip()
+        user = request.user  # Logged-in user
+
+        if not query:
+            return Response({"error": "Query cannot be empty"}, status=400)
+
+        # Check if the searched user exists
+        try:
+            searched_user = User.objects.get(username__iexact=query)
+        except User.DoesNotExist:
+            return Response({"error": "User does not exist"}, status=404)
+
+        # Check if a conversation exists between the logged-in user and the searched user
+        conversation = Conversation.objects.filter(
+            participants=user
+        ).filter(
+            participants=searched_user
+        ).distinct().first()
+
+        if conversation:
+            return Response({
+                "conversation": ConversationSerializer(conversation, context={"request": request}).data
+            })
+
+        # If no conversation exists, return user details so frontend can start one
+        return Response({
+            "user": UserSerializer(searched_user).data
+        })

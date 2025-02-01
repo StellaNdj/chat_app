@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import ConversationList from "../components/ConversationList";
 import Navbar from "../components/Navbar";
 import { AuthContext } from "../contexts/AuthContext";
-import { getConversations } from "../endpoints";
+import { getConversations, search } from "../endpoints";
 import ConversationSpace from "../components/ConversationSpace";
 
 const Dashboard = () => {
@@ -12,7 +12,7 @@ const Dashboard = () => {
   const [conversationOpen, setConversationOpen] = useState(false);
 
   console.log(token);
-  
+
   const fetchConversationData = async () => {
     const conversationData = await getConversations({token});
     setConversations(conversationData);

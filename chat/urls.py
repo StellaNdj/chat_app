@@ -1,4 +1,4 @@
-from .views import RegisterViewSet, UserDetailsViewSet, MessageViewSet, ConversationViewSet, UserProfileViewSet, PublicUserProfileViewSet
+from .views import RegisterViewSet, UserDetailsViewSet, MessageViewSet, ConversationViewSet, UserProfileViewSet, PublicUserProfileViewSet, SearchView
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 from django.conf import settings
@@ -18,4 +18,5 @@ router.register(r'public_profile', PublicUserProfileViewSet, basename='public_pr
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('search/', SearchView.as_view(), name='search'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
