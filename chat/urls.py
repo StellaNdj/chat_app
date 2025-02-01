@@ -1,6 +1,8 @@
 from .views import RegisterViewSet, UserDetailsViewSet, MessageViewSet, ConversationViewSet, UserProfileViewSet, PublicUserProfileViewSet
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'chat'
 
@@ -16,4 +18,4 @@ router.register(r'public_profile', PublicUserProfileViewSet, basename='public_pr
 
 urlpatterns = [
     path('', include(router.urls)),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

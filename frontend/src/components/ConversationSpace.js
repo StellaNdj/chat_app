@@ -2,23 +2,33 @@ import { formatDistance } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { publicProfiles } from '../endpoints';
 
 const ConversationSpace = ({ conversation, handleClose }) => {
-  const { user } = useContext(AuthContext);
-  const [messages, setMessages] = useState(conversation.messages)
+  const { user, token } = useContext(AuthContext);
+  const [messages, setMessages] = useState(conversation.messages);
   const [formData, setFormData] = useState({
     participants: conversation.other_user.id,
     content: '',
   });
   const [socket, setSocket] = useState(null);
+  const [profile, setProfile] = useState();
+
+
+  const getProfile = async ({token}) => {
+    const data = await publicProfiles({token: token, username: conversation.other_user.username});
+    setProfile(data);
+    console.log(data);
+  }
 
   useEffect(() => {
-    setMessages(conversation.messages)
-  }, [conversation]);
+    setMessages(conversation.messages);
+    getProfile({token})
+  }, [conversation, token]);
 
   useEffect(() => {
     const roomName = conversation.id;
-    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomName}/`);
+    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomName}/?token=${token}`);
     setSocket(ws);
 
     // Incoming messages
@@ -62,10 +72,14 @@ const ConversationSpace = ({ conversation, handleClose }) => {
   return(
     <>
       <div>
-        <div className='border-b border-gray-300 flex p-2'>
-          <button onClick={handleClose}><XMarkIcon className='size-4'/> </button>
-          <h3 className='font-bold mx-2'>{conversation.other_user.username}</h3>
-        </div>
+        {!profile ? <p>Loading...</p> :
+          <div className='border-b border-gray-300 flex p-2'>
+            <button onClick={handleClose}><XMarkIcon className='size-4'/> </button>
+            <img src={`http://localhost:8000/api${profile.image_url}`} alt='Profile pic' className='w-8 profile-pic'/>
+            <h3 className='font-bold mx-2'>{profile.username}</h3>
+            {profile.is_online ? <p>Online</p> : <p>Offline</p>}
+          </div>
+        }
         <>
           <div className='overflow-y-auto h-96  p-2 space-y-4'>
             {messages.map((message) =>

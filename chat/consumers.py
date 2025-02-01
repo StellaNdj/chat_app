@@ -1,29 +1,38 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from datetime import datetime
-from .models import Message, Conversation
+from .models import Message, Conversation, UserProfile
 from django.contrib.auth.models import User
 from channels.db import database_sync_to_async
 
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
+        user = self.scope['user']
+        print(user.id)
 
         # Add the user to the chat
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
+        # Change profile status
+        await set_user_online_status(user.id, True)
 
         await self.accept()
 
     async def disconnect(self, close_code):
+        user = self.scope['user']
+
         # Remove the user from the chat
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
+        # Change profile status
+        await set_user_online_status(user.id, False)
 
     async def receive(self, text_data):
         print("WebSocket message received:", text_data)
@@ -74,3 +83,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             sender=sender,
             content=content
         )
+@database_sync_to_async
+def set_user_online_status(user, online):
+    profile = UserProfile.objects.get(user=user)
+    profile.is_online = online
+    profile.save()

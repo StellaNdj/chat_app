@@ -84,6 +84,35 @@ export const newMessage = async ({token, participants, content}) => {
 }
 
 // Get the logged in user profile
+export const privateProfile = async ({token}) => {
+  try {
+    const response = await axios.get(`${APIroot}/profile/`,
+      {
+        headers: {
+          'Authorization' : `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
+
+  } catch (error) {
+    console.log('Error while fetching the private profile')
+  }
+}
 
 // Get the public profiles
-
+export const publicProfiles = async ({token, username}) => {
+  try {
+    const response = await axios.get(`${APIroot}/public_profile/?username=${username}`,
+      {
+        headers : {
+          'Authorization' : `Bearer ${token}`
+        }
+      }
+    );
+    return response.data[0];
+  } catch (error) {
+    console.log('Error while fetching user profile')
+  }
+}
