@@ -14,11 +14,9 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
   const [socket, setSocket] = useState(null);
   const [profile, setProfile] = useState();
 
-
   const getProfile = async ({token}) => {
     const data = await publicProfiles({token: token, username: conversation.other_user.username});
     setProfile(data);
-    console.log(data);
   }
 
 
@@ -33,6 +31,13 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         setMessages((prevMessages) => [...prevMessages, data]);
+
+        if (data.type === "read_receipt") {
+          console.log(`${data.user} has read the messages.`);
+          setMessages((prevMessages) =>
+            prevMessages.map(msg => ({ ...msg, is_read: true }))
+          );
+        }
       };
 
       return () => ws.close();

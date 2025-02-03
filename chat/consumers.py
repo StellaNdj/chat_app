@@ -34,6 +34,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Change profile status
         await set_user_online_status(user.id, False)
 
+        await self.mark_messages_as_read()
+
     async def receive(self, text_data):
         print("WebSocket message received:", text_data)
         data = json.loads(text_data)
@@ -66,6 +68,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Send the structured message to WebSocket
         await self.send(text_data=json.dumps(message))
+
+
+    async def mark_messages_as_read(self):
+        user = self.scope['user']
+        if user.is_authenticated:
+            await database_sync_to_async(self._update_messages_as_read)(user)
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                "type": "read_receipt",
+                "user": user.username
+            }
+        )
+
+    def _update_messages_as_read(self, user):
+        conversation = Conversation.objects.get(id=self.room_name)
+        Message.objects.filter(
+            conversation=conversation,
+            is_read=False
+        ).exclude(sender=user).update(is_read=True)
+
+    async def read_receipt(self, event):
+        print(f"Sending read receipt for {event['user']}")  # Debugging
+
+        await self.send(text_data=json.dumps(
+            {
+                "type": "read_receipt",
+                "user": event['user']
+            }
+        ))
 
     # Database operations must use `database_sync_to_async`
     @database_sync_to_async
