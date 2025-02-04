@@ -56,6 +56,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': {
+                    'type': 'chat_message', # Specify type
                     'content': message.content,
                     'sender': message.sender.id,
                     'timestamp': message.timestamp.isoformat(),

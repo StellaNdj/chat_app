@@ -30,7 +30,13 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
 
       ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        setMessages((prevMessages) => [...prevMessages, data]);
+
+        if (data.type === "chat_message") {
+          console.log("New message received:", data);
+
+          // Update messages with the new one
+          setMessages((prevMessages) => [...prevMessages, data.content]);
+        }
 
         if (data.type === "read_receipt") {
           console.log(`${data.user} has read the messages.`);
@@ -59,7 +65,11 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         setMessages([response.content]);
       }
     } else if (socket) {
-      socket.send(JSON.stringify({ message: formData.content, sender: user[0].id }));
+      socket.send(JSON.stringify({
+        type: "chat_message", // Ensure WebSocket knows what this is
+        message: formData.content,
+        sender: user[0].id
+      }));
     }
 
     setFormData({ ...formData, content: '' });
@@ -77,7 +87,16 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           <img src={`http://localhost:8000/api${profile?.image_url}`} className="w-10 h-10 rounded-full object-cover shadow-sm" alt='Profile pic' />
           <div className='mx-2' >
             <h3 className="font-bold">{profile?.username}</h3>
-            {profile?.is_online ? <p className='text-xs text-green-600'>online</p> : <p className='text-xs text-gray-600'>offline</p>}
+            {profile?.is_online ?
+              <div className='flex items-center'>
+                <div className='p-1 w-0 rounded-full bg-green-400'></div>
+                <p className='text-xs text-green-400 ml-1'>online</p>
+              </div> :
+              <div  className='flex items-center'>
+                <div className='p-1 w-0 rounded-full bg-gray-400'></div>
+                <p className='text-xs text-gray-400 ml-1'>offline</p>
+              </div>
+            }
           </div>
         </div>
       )}
