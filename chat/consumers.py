@@ -11,7 +11,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
         user = self.scope['user']
-        print(user.id)
 
         # Add the user to the chat
         await self.channel_layer.group_add(
@@ -20,6 +19,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
         # Change profile status
         await set_user_online_status(user.id, True)
+
+        # Mark messages as read
+        await self.mark_messages_as_read()
 
         await self.accept()
 
@@ -34,7 +36,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # Change profile status
         await set_user_online_status(user.id, False)
 
-        await self.mark_messages_as_read()
 
     async def receive(self, text_data):
         print("WebSocket message received:", text_data)

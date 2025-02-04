@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchConversationData();
-  }, [])
+  }, [selectedConversation])
 
   const handleConversationSelected = (conversation) => {
     setSelectedConversation(conversation);
@@ -66,6 +66,7 @@ const Dashboard = () => {
               handleClose={handleClose}
               newUser={searchedUser}
               setSelectedConversation={setSelectedConversation}
+              setConversations={setConversations}
             />
           ) : (
 

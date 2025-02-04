@@ -4,7 +4,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { newMessage, publicProfiles } from '../endpoints';
 
-const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConversation }) => {
+const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConversation, setConversations }) => {
   const { user, token } = useContext(AuthContext);
   const [messages, setMessages] = useState(conversation?.messages || []);
   const [formData, setFormData] = useState({
@@ -35,7 +35,29 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           console.log("New message received:", data);
 
           // Update messages with the new one
-          setMessages((prevMessages) => [...prevMessages, data.content]);
+          // setMessages((prevMessages) => [...prevMessages, data.content]);
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: Date.now(),  // Temporary ID until real one comes from the server
+              content: data.content,
+              sender: data.sender,
+              timestamp: new Date().toISOString(),
+            },
+          ]);
+
+                  // Update Dashboard conversation list
+          setConversations((prevConversations) => {
+            return prevConversations.map((conv) => {
+              if (conv.id === conversation.id) {
+                return {
+                  ...conv,
+                  last_message: newMessage, // Update last message
+                };
+              }
+              return conv;
+            });
+          });
         }
 
         if (data.type === "read_receipt") {
@@ -72,6 +94,19 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       }));
     }
 
+    // Update Dashboard conversation list
+    setConversations((prevConversations) => {
+      return prevConversations.map((conv) => {
+        if (conv.id === conversation.id) {
+          return {
+            ...conv,
+            last_message: newMessage, // Update last message
+          };
+        }
+        return conv;
+      });
+    });
+
     setFormData({ ...formData, content: '' });
   }
 
@@ -84,7 +119,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       ) : (
         <div className="border-b flex p-2">
           <button onClick={handleClose}><XMarkIcon className="size-4" /></button>
-          <img src={`http://localhost:8000/api${profile?.image_url}`} className="w-10 h-10 rounded-full object-cover shadow-sm" alt='Profile pic' />
+          <img src={profile?.image_url ? `http://localhost:8000/api${profile.image_url}` : "/default-profile.png"} alt='Profile pic' className="w-10 h-10 rounded-full object-cover shadow-sm"/>
           <div className='mx-2' >
             <h3 className="font-bold">{profile?.username}</h3>
             {profile?.is_online ?
