@@ -43,42 +43,46 @@ const Dashboard = () => {
     setConversationOpen(true);
   }
 
-  return(
+  return (
     <>
-      <div className="flex justify-around ">
-        {/* Navbar section */}
-        <Navbar/>
-
-        {/* Contacts */}
-        <div className={`basis-1/3 section rounded-lg p-4 m-4`}>
-        <SearchBar onUserSelect={handleUserSelected} />
-          <ConversationList
-            conversations={conversations}
-            onConversationSelect={handleConversationSelected}
-          />
+      <div className="flex flex-col md:flex-row justify-around h-screen">
+        <div className="w-28 md:w-28 lg:w-28 h-full fixed md:relative flex-shrink-0">
+          {/* Navbar section */}
+          <Navbar />
         </div>
 
-        {/* Message / Conversation Space */}
-        <div className="flex-grow section rounded-lg p-4 m-4 dash-height">
-          {conversationOpen ? (
-            <ConversationSpace
-              conversation={selectedConversation}
-              handleClose={handleClose}
-              newUser={searchedUser}
-              setSelectedConversation={setSelectedConversation}
-              setConversations={setConversations}
+        <div className="flex flex-col md:flex-row justify-around flex-grow ml-28 md:ml-0 mr-4 p-4">
+          {/* Contacts List - Show only if no conversation is open on small screens */}
+          <div className={`w-full md:basis-1/3 section rounded-lg p-4 dash-height ${conversationOpen ? 'hidden md:block' : 'block'}`}>
+            <SearchBar onUserSelect={setSearchedUser} />
+            <ConversationList
+              conversations={conversations}
+              onConversationSelect={handleConversationSelected}
             />
-          ) : (
-
-            <div className="flex items-center justify-center h-full text-gray-500">
-              <p>Select a conversation to start chatting.</p>
-            </div>
-          )}
+          </div>
         </div>
 
+        <div className="flex flex-col md:flex-row justify-around flex-grow ml-20 md:ml-0 mr-4 p-4">
+          {/* Message / Conversation Space - Show only when a conversation is selected on small screens */}
+          <div className={`w-full md:flex-grow section rounded-lg p-4 m-4 dash-height ${conversationOpen ? 'block' : 'hidden'} md:block`}>
+            {conversationOpen ? (
+              <ConversationSpace
+                conversation={selectedConversation}
+                handleClose={handleClose}
+                newUser={searchedUser}
+                setSelectedConversation={setSelectedConversation}
+                setConversations={setConversations}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                <p>Select a conversation to start chatting.</p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </>
-  )
+  );
 }
 
 export default Dashboard;

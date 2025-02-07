@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return(
     <>
-      <nav className="main-bg p-4 m-4 rounded-lg">
+      <nav className="main-bg p-4 mx-4 my-10 rounded-lg dash-height">
         <HomeIcon className="size-12 cursor-pointer p-2"/>
         <div>
           <button onClick={toggleTheme}>
