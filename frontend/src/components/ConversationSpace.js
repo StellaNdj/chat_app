@@ -34,19 +34,18 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         if (data.type === "chat_message") {
           console.log("New message received:", data);
 
+          // New message
+          const newMessage = {
+            id: Date.now(),  // Temporary ID until it syncs with the backend
+            content: data.content,
+            sender: data.sender,
+            timestamp: new Date().toISOString(),
+          }
           // Update messages with the new one
-          // setMessages((prevMessages) => [...prevMessages, data.content]);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: Date.now(),  // Temporary ID until real one comes from the server
-              content: data.content,
-              sender: data.sender,
-              timestamp: new Date().toISOString(),
-            },
-          ]);
+          setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-                  // Update Dashboard conversation list
+
+          // Update Dashboard conversation list
           setConversations((prevConversations) => {
             return prevConversations.map((conv) => {
               if (conv.id === conversation.id) {
@@ -78,6 +77,14 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
 
     if (!formData.content.trim()) return;
 
+    // New message
+      const newMessage = {
+        id: Date.now(),  // Temporary ID until it syncs with the backend
+        content: formData.content,
+        sender: user[0].id,
+        timestamp: new Date().toISOString(),
+      }
+
     if (newUser) {
       // Start a new conversation by sending the first message
       const response = await newMessage({ token, participants: [newUser.id], content: formData.content });
@@ -88,7 +95,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       }
     } else if (socket) {
       socket.send(JSON.stringify({
-        type: "chat_message", // Ensure WebSocket knows what this is
+        type: "chat_message",
         message: formData.content,
         sender: user[0].id
       }));

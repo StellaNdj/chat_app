@@ -9,7 +9,7 @@ const ConversationList = ({conversations, onConversationSelect}) => {
             <h4 className="font-bold">{conversation.other_user.username}</h4>
             <p className='text-sm text-gray-400'>{conversation.last_message?.timestamp
               ? formatDistance(new Date(conversation.last_message.timestamp), new Date(), { addSuffix: true })
-              : "No messages yet"}</p>
+              : "Now"}</p>
           </div>
           <p className='text-sm text-gray-500'>{conversation.last_message.content}</p>
         </div>
