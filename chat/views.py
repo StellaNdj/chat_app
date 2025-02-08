@@ -10,6 +10,8 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.decorators import action
+from rest_framework.generics import RetrieveUpdateAPIView
 # Create your views here.
 
 # Registration view
@@ -41,26 +43,35 @@ class UserDetailsViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# User Profile view
-class UserProfileViewSet(viewsets.ModelViewSet):
+# User Profile view viewset version
+# class UserProfileViewSet(viewsets.ModelViewSet):
+#     serializer_class = UserProfileSerializer
+#     permission_classes = [IsAuthenticated]
+#     parser_classes = (MultiPartParser, FormParser)
+
+#     def get_queryset(self):
+#         return UserProfile.objects.filter(user=self.request.user.id)
+
+#     def get_object(self):
+#         """Ensure the user can only update their own profile"""
+#         return UserProfile.objects.get(user=self.request.user)
+
+#     @action(detail=False, methods=['patch'], url_path='update')
+#     def update_profile(self, request, *args, **kwargs):
+#         # profile = UserProfile.objects.get(user=self.request.user)
+#         profile = self.get_object()
+#         serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data)
+class UserProfileView(RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
 
-    def get_queryset(self):
-        return UserProfile.objects.filter(user=self.request.user.id)
-
     def get_object(self):
-        """Ensure the user can only update their own profile"""
+        """Ensure the user can only access their own profile"""
         return UserProfile.objects.get(user=self.request.user)
-
-    def update(self, request, *args, **kwargs):
-        # profile = UserProfile.objects.get(user=self.request.user)
-        profile = self.get_object()
-        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
 
 # Public Profile view
 class PublicUserProfileViewSet(ReadOnlyModelViewSet):
