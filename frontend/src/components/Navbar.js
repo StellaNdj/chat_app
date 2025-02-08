@@ -11,7 +11,7 @@ const Navbar = () => {
   return(
     <>
       <nav className="main-bg p-4 mx-4 my-10 rounded-lg dash-height">
-        <HomeIcon className="size-12 cursor-pointer p-2"/>
+        <Link to='/'><HomeIcon className="size-12 cursor-pointer p-2"/></Link>
         <div>
           <button onClick={toggleTheme}>
             {darkMode ? <SunIcon className="size-12 cursor-pointer p-2"/>: <MoonIcon className="size-12 cursor-pointer p-2"/>}
@@ -21,7 +21,7 @@ const Navbar = () => {
           <Link to='/profile'><UserCircleIcon className="size-12 cursor-pointer p-2"/></Link>
           <p className="text-center">{user[0].username}</p>
         </div>
-        <ChatBubbleOvalLeftEllipsisIcon className="size-12 cursor-pointer p-2"/>
+        <Link to='/dashboard'><ChatBubbleOvalLeftEllipsisIcon className="size-12 cursor-pointer p-2"/></Link>
         <Cog6ToothIcon className="size-12 cursor-pointer p-2"/>
         <button onClick={() => logout()}>
           <ArrowLeftEndOnRectangleIcon className="size-12 cursor-pointer p-2"/>
