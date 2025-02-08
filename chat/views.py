@@ -50,8 +50,13 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return UserProfile.objects.filter(user=self.request.user.id)
 
+    def get_object(self):
+        """Ensure the user can only update their own profile"""
+        return UserProfile.objects.get(user=self.request.user)
+
     def update(self, request, *args, **kwargs):
-        profile = UserProfile.objects.get(user=self.request.user)
+        # profile = UserProfile.objects.get(user=self.request.user)
+        profile = self.get_object()
         serializer = UserProfileSerializer(profile, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()

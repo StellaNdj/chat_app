@@ -135,18 +135,27 @@ export const search = async ({token, username}) => {
 }
 
 // Update user infos
-export const updateUserInfos = async ({token, userId}) => {
+export const updateUserInfos = async ({token, userId, formData}) => {
   try {
     const response = await axios.patch(`${APIroot}/user/${userId}/`,
+      formData,
       {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.log('Error while updating user', error)
+  }
+}
+
+// Update user profile pic
+export const updateUserProfile = async ({token, file}) => {
+  try {
+
+  } catch (error) {
+    console.log('Error while updating profile', error)
   }
 }

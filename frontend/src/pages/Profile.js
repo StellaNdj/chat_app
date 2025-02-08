@@ -1,9 +1,11 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import Navbar from '../components/Navbar';
+import { updateUserInfos } from "../endpoints";
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
+  const [file, setFile] = useState(null);
 
   const [userFormData, setUserFormData] = useState({
     username: user[0]?.username || "",
@@ -20,14 +22,21 @@ const Profile = () => {
     }));
   }
 
-  const handleInfoSubmit = (e) => {
+  const handleInfoSubmit = async (e) => {
     e.preventDefault();
 
+    const response = await updateUserInfos({token: token, userId: user[0]?.id, formData: userFormData})
+    if (response) {
+      console.log('Here is the response:', response);
+    }
   }
 
-  const [profileFormData, setProfileFormData] = useState(
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
 
-  )
+    const formData = new FormData()
+    if (file) formData.append('image', file)
+  }
 
   if (!user) return <div>Loading...</div>
 
@@ -40,9 +49,9 @@ const Profile = () => {
 
       <div>
         {/* Edit profile */}
-        <h2 className='font-bold'>Edit your profile</h2>
+        <h2 className='font-bold'>Edit your profile pic</h2>
         <form>
-          <input type='file' accept="image/*"/>
+          <input type='file' onChange={handleFileChange} accept="image/*"/>
           <button type='submit'>Update</button>
         </form>
 
