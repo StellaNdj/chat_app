@@ -9,6 +9,7 @@ from django.db.models import Count
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from django.db.models import Q
 from rest_framework.views import APIView
+from rest_framework.parsers import FormParser, MultiPartParser
 # Create your views here.
 
 # Registration view
@@ -32,11 +33,19 @@ class UserDetailsViewSet(viewsets.ModelViewSet):
             "email": user.email
         })
 
+    def update(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 # User Profile view
 class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get_queryset(self):
         return UserProfile.objects.filter(user=self.request.user.id)

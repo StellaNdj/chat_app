@@ -28,6 +28,26 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
+# Profiles
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'image', 'is_online']
+
+class PublicProfileUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserProfile
+        fields = ['username', 'image_url', 'is_online']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
+
 # Message serializer
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -65,24 +85,4 @@ class ConversationSerializer(serializers.ModelSerializer):
                 "content": last_message.content,
                 "timestamp": last_message.timestamp
             }
-        return None
-
-# Profiles
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    class Meta:
-        model = UserProfile
-        fields = ['user', 'image', 'is_online']
-
-class PublicProfileUserSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username', read_only=True)
-    image_url = serializers.SerializerMethodField()
-
-    class Meta:
-        model = UserProfile
-        fields = ['username', 'image_url', 'is_online']
-
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
         return None

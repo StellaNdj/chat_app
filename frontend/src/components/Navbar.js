@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { ArrowLeftEndOnRectangleIcon, ChatBubbleOvalLeftEllipsisIcon, Cog6ToothIcon, HomeIcon, MoonIcon, SunIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -17,7 +18,7 @@ const Navbar = () => {
           </button>
         </div>
         <div>
-          <UserCircleIcon className="size-12 cursor-pointer p-2"/>
+          <Link to='/profile'><UserCircleIcon className="size-12 cursor-pointer p-2"/></Link>
           <p className="text-center">{user[0].username}</p>
         </div>
         <ChatBubbleOvalLeftEllipsisIcon className="size-12 cursor-pointer p-2"/>

@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import ThemeProvider from './contexts/ThemeContext';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
             {/* Private routes */}
             <Route element={<ProtectedRoute/>}>
               <Route path='/dashboard' element={<Dashboard/>}/>
+            </Route>
+            <Route element={<ProtectedRoute/>}>
+              <Route path='/profile' element={<Profile/>}/>
             </Route>
 
           </Routes>
