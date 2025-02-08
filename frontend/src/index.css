@@ -49,3 +49,14 @@ body.dark-theme, .dark {
   border-radius: 50%;
   object-fit: cover;
 }
+
+.btn {
+  background-color: #004aad;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: white;
+}
+
+.btn:hover {
+  background-color: #165ab3;
+}

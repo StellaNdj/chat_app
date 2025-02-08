@@ -47,74 +47,80 @@ const Profile = () => {
         <Navbar/>
       </div>
 
-      <div>
-        {/* Edit profile */}
-        <h2 className='font-bold'>Edit your profile pic</h2>
-        <form>
-          <input type='file' onChange={handleFileChange} accept="image/*"/>
-          <button type='submit'>Update</button>
-        </form>
-
-        {/* Edit user infos */}
-        <h2 className='font-bold'>Edit your infos</h2>
-        <form onSubmit={handleInfoSubmit}>
-        <div className="font-medium text-lg flex w-full m-2">
-              <label className="mx-8 w-28" >
-                Username
-              </label>
-              <input
-                type="text"
-                name="username"
-                value={userFormData.username}
-                onChange={handleInfoChange}
-                required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
-              />
-            </div>
-
+      <div className="m-10">
+        <div className="my-4">
+          {/* Edit profile */}
+          <h2 className='font-bold text-lg'>Edit your profile pic</h2>
+          <form>
             <div className="font-medium text-lg flex w-full m-2">
-              <label className="mx-8 w-28" >
-                First Name
-              </label>
+              <input type='file' onChange={handleFileChange} accept="image/*"/>
+            </div>
+            <button type='submit' className='btn'>Update profile pic</button>
+          </form>
+        </div>
+
+        <div className="my-4">
+          {/* Edit user infos */}
+          <h2 className='font-bold text-lg'>Edit your infos</h2>
+          <form onSubmit={handleInfoSubmit}>
+          <div className="font-medium text-lg flex w-full m-2">
+                <label className="mr-8 w-28" >
+                  Username
+                </label>
                 <input
                   type="text"
-                  name="first_name"
-                  value={userFormData.first_name}
+                  name="username"
+                  value={userFormData.username}
                   onChange={handleInfoChange}
                   required
                   className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
                 />
-            </div>
+              </div>
 
-            <div className="font-medium text-lg flex w-full m-2">
-              <label className="mx-8 w-28" >
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="last_name"
-                value={userFormData.last_name}
-                onChange={handleInfoChange}
-                required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
-              />
-            </div>
+              <div className="font-medium text-lg flex w-full m-2">
+                <label className="mr-8 w-28" >
+                  First Name
+                </label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={userFormData.first_name}
+                    onChange={handleInfoChange}
+                    required
+                    className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                  />
+              </div>
 
-            <div className="font-medium text-lg flex w-full m-2">
-              <label className="mx-8 w-28">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={userFormData.email}
-                onChange={handleInfoChange}
-                required
-                className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
-              />
-            </div>
-            <button>Update infos</button>
-        </form>
+              <div className="font-medium text-lg flex w-full m-2">
+                <label className="mr-8 w-28" >
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="last_name"
+                  value={userFormData.last_name}
+                  onChange={handleInfoChange}
+                  required
+                  className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                />
+              </div>
+
+              <div className="font-medium text-lg flex w-full m-2">
+                <label className="mr-8 w-28">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={userFormData.email}
+                  onChange={handleInfoChange}
+                  required
+                  className="block min-w-0 grow py-1.5 pl-1 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline focus:outline-0 sm:text-sm/6 border border-black"
+                />
+              </div>
+              <button type='submit' className='btn'>Update infos</button>
+          </form>
+        </div>
       </div>
 
     </div>
