@@ -68,22 +68,20 @@ class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
     other_user = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
-    user_image = serializers.CharField(source='user.userprofile.image.url', read_only=True)
+    user_images = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message', 'user_image']
+        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message', 'user_images']
 
     def get_other_user(self, obj):
         requesting_user = self.context['request'].user
-        other_user = obj.participants.exclude(id=requesting_user.id).first()
+        other_users = obj.participants.exclude(id=requesting_user.id)
 
-        if other_user:
-            return {
-                "id": other_user.id,
-                "username": other_user.username
-            }
-        return None
+        return [
+            {"id": user.id, "username": user.username}
+            for user in other_users
+        ] if other_users.exists() else None
 
     def get_last_message(self, obj):
         last_message = obj.messages.last()
@@ -94,3 +92,13 @@ class ConversationSerializer(serializers.ModelSerializer):
                 "timestamp": last_message.timestamp
             }
         return None
+
+    def get_user_images(self, obj):
+        requesting_user = self.context['request'].user
+        images = []
+        for user in obj.participants.exclude(id=requesting_user.id):
+            profile = getattr(user, 'userprofile', None)
+            
+            if profile and profile.image:
+                images.append({'user_id': user.id, 'image_url': profile.image.url})
+        return images

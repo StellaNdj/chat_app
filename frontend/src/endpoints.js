@@ -162,7 +162,6 @@ export const updateUserProfile = async ({token, formData}) => {
         }
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.log('Error while updating profile', error)

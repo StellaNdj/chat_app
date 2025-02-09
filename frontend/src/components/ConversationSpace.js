@@ -15,7 +15,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
   const [profile, setProfile] = useState();
 
   const getProfile = async ({token}) => {
-    const data = await publicProfiles({token: token, username: conversation.other_user.username});
+    const data = await publicProfiles({token: token, username: conversation.other_user.map((user) => user.username)});
     setProfile(data);
   }
 
