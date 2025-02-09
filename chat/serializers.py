@@ -72,7 +72,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message', 'user_images']
+        fields = ['id', 'participants', 'created_at', 'messages', 'other_user', 'last_message', 'user_images', 'name']
 
     def get_other_user(self, obj):
         requesting_user = self.context['request'].user
@@ -98,7 +98,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         images = []
         for user in obj.participants.exclude(id=requesting_user.id):
             profile = getattr(user, 'userprofile', None)
-            
+
             if profile and profile.image:
                 images.append({'user_id': user.id, 'image_url': profile.image.url})
         return images

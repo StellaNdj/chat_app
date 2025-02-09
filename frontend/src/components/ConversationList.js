@@ -12,7 +12,8 @@ const ConversationList = ({conversations, onConversationSelect}) => {
           )}
           <div>
             <div className="flex justify-between">
-              <h4 className="font-bold">{conversation.other_user.map((user) => user.username)}</h4>
+              {conversation.name? <h4 className="font-bold">{conversation.name}</h4> : <h4 className="font-bold">{conversation.other_user.map((user) => user.username)}</h4> }
+              {/* <h4 className="font-bold">{conversation.other_user.map((user) => user.username)}</h4> */}
               <p className='text-sm text-gray-400'>{conversation.last_message?.timestamp
                 ? formatDistance(new Date(conversation.last_message.timestamp), new Date(), { addSuffix: true })
                 : "Now"}</p>

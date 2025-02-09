@@ -167,3 +167,21 @@ export const updateUserProfile = async ({token, formData}) => {
     console.log('Error while updating profile', error)
   }
 }
+
+// Update group name
+export const updateGroupName = async ({token, name, conversationId}) => {
+  try {
+    const response = await axios.patch(`${APIroot}/conversations/${conversationId}`,
+      name,
+      {
+        headers: {
+          'Authorization' : `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Error while updating the name', error)
+  }
+}

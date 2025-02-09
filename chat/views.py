@@ -167,6 +167,21 @@ class ConversationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Conversation.objects.filter(participants=self.request.user)
 
+    def update(self, request, *args, **kwargs):
+        conversation = self.get_object()
+
+        if request.user not in conversation.participants.all():
+            return Response({"error": "You cannot rename this conversation."}, status=status.HTTP_403_FORBIDDEN)
+        
+        name = request.data.get('name')
+
+        if name:
+            conversation.name = name
+            conversation.save()
+            return Response({"message":"Conversation name updated", "name": conversation.name})
+        return Response({"error": "Name field is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class SearchView(APIView):
     permission_classes = [IsAuthenticated]
 
