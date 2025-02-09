@@ -1,18 +1,18 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import Navbar from '../components/Navbar';
-import { updateUserInfos } from "../endpoints";
+import { privateProfile, updateUserInfos } from "../endpoints";
 
 const Profile = () => {
   const { user, token } = useContext(AuthContext);
   const [file, setFile] = useState(null);
-
+  const [imageUrl, setImageUrl] = useState(null);
   const [userFormData, setUserFormData] = useState({
     username: user[0]?.username || "",
     first_name: user[0]?.first_name || "",
     last_name: user[0]?.last_name || "",
     email: user[0]?.email || "",
-  })
+  });
 
   const handleInfoChange = (e) => {
     const {name, value} = e.target;
@@ -38,6 +38,16 @@ const Profile = () => {
     if (file) formData.append('image', file)
   }
 
+  const fetchProfilePic = async () => {
+    const response = await privateProfile({token: token});
+    console.log(response.image_url);
+    setImageUrl(response.image_url);
+  }
+
+  useEffect(() => {
+    fetchProfilePic();
+  }, [])
+
   if (!user) return <div>Loading...</div>
 
   return (
@@ -50,6 +60,7 @@ const Profile = () => {
       <div className="m-10">
         <div className="my-4">
           {/* Edit profile */}
+          <img src={`http://localhost:8000/api${imageUrl}`} alt='Profile pic' className="w-24 h-24 rounded-full object-cover shadow-sm"/>
           <h2 className='font-bold text-lg'>Edit your profile pic</h2>
           <form>
             <div className="font-medium text-lg flex w-full m-2">

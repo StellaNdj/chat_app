@@ -12,7 +12,6 @@ router.register(r'register', RegisterViewSet, basename='register')
 router.register(r'user', UserDetailsViewSet, basename='user')
 router.register(r'messages', MessageViewSet, basename='messages')
 router.register(r'conversations', ConversationViewSet, basename='conversations')
-# router.register(r'profile', UserProfileViewSet, basename='profile')
 router.register(r'public_profile', PublicUserProfileViewSet, basename='public_profile')
 
 

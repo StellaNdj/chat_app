@@ -93,7 +93,6 @@ export const privateProfile = async ({token}) => {
         }
       }
     );
-    console.log(response.data);
     return response.data;
 
   } catch (error) {
@@ -154,7 +153,15 @@ export const updateUserInfos = async ({token, userId, formData}) => {
 // Update user profile pic
 export const updateUserProfile = async ({token, file}) => {
   try {
-
+    const response = await axios.get(`${APIroot}/profile/`,
+      {
+        headers: {
+          'Authorization' : `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
   } catch (error) {
     console.log('Error while updating profile', error)
   }
