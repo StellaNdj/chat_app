@@ -35,13 +35,19 @@ const SearchBar = ({onUserSelect}) => {
 
       {/* Display Search Results */}
       <div className="mt-2">
-        {results.map((result) => (
+        {results.map((result, index) => (
           <div
-            key={result.user.id}
+            key={index}
             className="cursor-pointer p-2 border-b"
             onClick={() => onUserSelect(result)}
           >
-            <p className="font-bold">{result.user.username || result.conversation?.other_user?.username}</p>
+            {result.user ? (
+                <p className="font-bold">{result.user.username}</p>
+              ) : result.conversation ? (
+                <p className="font-bold">{result.conversation.other_user.map((user) => user.username)}</p>
+              ) : (
+                <p className="font-bold">{result.no_user}</p>
+              )}
           </div>
         ))}
       </div>

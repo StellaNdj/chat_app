@@ -172,7 +172,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
         if request.user not in conversation.participants.all():
             return Response({"error": "You cannot rename this conversation."}, status=status.HTTP_403_FORBIDDEN)
-        
+
         name = request.data.get('name')
 
         if name:
@@ -196,7 +196,7 @@ class SearchView(APIView):
         try:
             searched_user = User.objects.get(username__iexact=query)
         except User.DoesNotExist:
-            return Response({"error": "User does not exist"}, status=404)
+            return Response({"no_user": "User does not exist"}, status=200)
 
         # Check if a conversation exists between the logged-in user and the searched user
         conversation = Conversation.objects.filter(
