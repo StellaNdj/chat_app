@@ -73,6 +73,14 @@ class UserProfileView(RetrieveUpdateAPIView):
         """Ensure the user can only access their own profile"""
         return UserProfile.objects.get(user=self.request.user)
 
+    def update(self, request, *args, **kwargs):
+        profile = self.get_object()
+        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
 # Public Profile view
 class PublicUserProfileViewSet(ReadOnlyModelViewSet):
     serializer_class = PublicProfileUserSerializer

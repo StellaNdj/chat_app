@@ -32,10 +32,11 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     image_url = serializers.SerializerMethodField()
-    
+    image = serializers.ImageField(required=False)
+
     class Meta:
         model = UserProfile
-        fields = ['user', 'image_url', 'is_online']
+        fields = ['user', 'image_url', 'image', 'is_online']
 
     def get_image_url(self, obj):
         if obj.image:

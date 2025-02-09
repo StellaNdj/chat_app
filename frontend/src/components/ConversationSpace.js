@@ -126,7 +126,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       ) : (
         <div className="border-b flex p-2">
           <button onClick={handleClose}><XMarkIcon className="size-4" /></button>
-          <img src={profile?.image_url ? `http://localhost:8000/api${profile.image_url}` : "/default-profile.png"} alt='Profile pic' className="w-10 h-10 rounded-full object-cover shadow-sm"/>
+          <img src={profile?.image_url ? `http://localhost:8000/api${profile.image_url}` : "http://localhost:8000/api/media/default.png"} alt='Profile pic' className="w-10 h-10 rounded-full object-cover shadow-sm"/>
           <div className='mx-2' >
             <h3 className="font-bold">{profile?.username}</h3>
             {profile?.is_online ?

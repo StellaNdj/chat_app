@@ -151,12 +151,14 @@ export const updateUserInfos = async ({token, userId, formData}) => {
 }
 
 // Update user profile pic
-export const updateUserProfile = async ({token, file}) => {
+export const updateUserProfile = async ({token, formData}) => {
   try {
-    const response = await axios.get(`${APIroot}/profile/`,
+    const response = await axios.patch(`${APIroot}/profile/`,
+      formData,
       {
         headers: {
-          'Authorization' : `Bearer ${token}`
+          'Authorization' : `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         }
       }
     );

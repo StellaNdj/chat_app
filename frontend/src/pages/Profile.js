@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import Navbar from '../components/Navbar';
-import { privateProfile, updateUserInfos } from "../endpoints";
+import { privateProfile, updateUserInfos, updateUserProfile } from "../endpoints";
 
 const Profile = () => {
   const { user, token } = useContext(AuthContext);
@@ -33,15 +33,27 @@ const Profile = () => {
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-
-    const formData = new FormData()
-    if (file) formData.append('image', file)
   }
 
   const fetchProfilePic = async () => {
     const response = await privateProfile({token: token});
-    console.log(response.image_url);
     setImageUrl(response.image_url);
+  }
+
+  const handlePicSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!file) {
+      console.log('No file selected');
+      return
+    }
+    const formData = new FormData()
+    formData.append('image', file);
+
+    const response = await updateUserProfile({token: token, formData: formData})
+    if (response) {
+      fetchProfilePic();
+    }
   }
 
   useEffect(() => {
@@ -60,9 +72,10 @@ const Profile = () => {
       <div className="m-10">
         <div className="my-4">
           {/* Edit profile */}
-          <img src={`http://localhost:8000/api${imageUrl}`} alt='Profile pic' className="w-24 h-24 rounded-full object-cover shadow-sm"/>
+          <img src={imageUrl? `http://localhost:8000/api${imageUrl}` : "http://localhost:8000/api/media/default.png"} alt='Profile pic' className="w-24 h-24 rounded-full object-cover shadow-sm"/>
+
           <h2 className='font-bold text-lg'>Edit your profile pic</h2>
-          <form>
+          <form onSubmit={handlePicSubmit}>
             <div className="font-medium text-lg flex w-full m-2">
               <input type='file' onChange={handleFileChange} accept="image/*"/>
             </div>
