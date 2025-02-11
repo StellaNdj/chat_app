@@ -15,7 +15,8 @@ const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const userData = await userDetails({token});
-          setUser(userData)
+          setUser(userData);
+          navigate('/dashboard');
         } catch (error) {
           console.log(error);
         }
