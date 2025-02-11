@@ -60,3 +60,7 @@ body.dark-theme, .dark {
 .btn:hover {
   background-color: #165ab3;
 }
+
+.bx-sx {
+  box-shadow: 1px 1px 1px #d3d3e8;
+}

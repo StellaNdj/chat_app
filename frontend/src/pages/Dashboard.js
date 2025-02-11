@@ -51,9 +51,9 @@ const Dashboard = () => {
           <Navbar />
         </div>
 
-        <div className="flex flex-col md:flex-row justify-around flex-grow ml-28 md:ml-0 mr-4 p-4">
+        <div className="flex flex-col md:flex-row justify-around flex-grow">
           {/* Contacts List - Show only if no conversation is open on small screens */}
-          <div className={`w-full md:basis-1/3 section rounded-lg p-4 dash-height ${conversationOpen ? 'hidden md:block' : 'block'}`}>
+          <div className={`w-full md:basis-1/3 bx-sx ${conversationOpen ? 'hidden md:block' : 'block'}`}>
             <SearchBar onUserSelect={setSearchedUser} />
             <ConversationList
               conversations={conversations}
@@ -62,9 +62,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-around flex-grow ml-20 md:ml-0 mr-4 p-4">
+        <div className="flex flex-col md:flex-row justify-around flex-grow">
           {/* Message / Conversation Space - Show only when a conversation is selected on small screens */}
-          <div className={`w-full md:flex-grow section rounded-lg p-4 m-4 dash-height ${conversationOpen ? 'block' : 'hidden'} md:block`}>
+          <div className={`w-full md:flex-grow  ${conversationOpen ? 'block' : 'hidden'} md:block`}>
             {conversationOpen ? (
               <ConversationSpace
                 conversation={selectedConversation}

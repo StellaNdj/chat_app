@@ -10,7 +10,7 @@ const Navbar = () => {
 
   return(
     <>
-      <nav className="main-bg p-4 mx-4 my-10 rounded-lg dash-height">
+      <nav className="main-bg h-full bx-sx">
         <Link to='/'><HomeIcon className="size-12 cursor-pointer p-2"/></Link>
         <div>
           <button onClick={toggleTheme}>

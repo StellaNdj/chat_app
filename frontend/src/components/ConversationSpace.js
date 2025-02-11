@@ -143,7 +143,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         </div>
       )}
 
-      <div className="h-[22rem] p-2 space-y-4 overflow-y-auto">
+      <div className="h-[29rem] p-2 mr-2 space-y-4 overflow-y-auto">
         {messages.map((message) => (
           <div key={message.id} className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
             <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
