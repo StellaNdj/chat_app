@@ -143,7 +143,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         </div>
       )}
 
-      <div className="h-[29rem] p-2 mr-2 space-y-4 overflow-y-auto">
+      <div className="h-[29rem] p-4 mr-2 space-y-4 overflow-y-auto">
         {messages.map((message) => (
           <div key={message.id} className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
             <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
@@ -154,13 +154,13 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       </div>
 
       <div className="sticky bottom-0 p-2 border-t">
-        <form onSubmit={handleSendMessage} className="flex">
+        <form onSubmit={handleSendMessage} className="flex justify-between">
           <input
             name="content"
             value={formData.content}
             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
             placeholder="Type your message..."
-            className="border p-1 rounded-lg w-80"
+            className="border p-1 rounded-lg w-full"
           />
           <button className="p-1 bg-blue-600 text-white rounded-lg">
             <PaperAirplaneIcon className="size-6 cursor-pointer" />
