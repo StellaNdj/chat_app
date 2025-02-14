@@ -53,7 +53,7 @@ const Dashboard = () => {
 
         <div className="">
           {/* Contacts List - Show only if no conversation is open on small screens */}
-          <div className={` h-full md:basis-1/3 bx-sx p-4 ${conversationOpen ? 'hidden md:block' : 'block'}`}>
+          <div className={`h-full md:basis-1/3 bx-sx p-4 ${conversationOpen ? 'hidden md:block' : 'block'}`}>
             <SearchBar onUserSelect={setSearchedUser} />
             <ConversationList
               conversations={conversations}

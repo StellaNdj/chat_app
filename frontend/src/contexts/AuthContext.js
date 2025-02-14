@@ -18,7 +18,11 @@ const AuthProvider = ({ children }) => {
           setUser(userData);
           navigate('/dashboard');
         } catch (error) {
-          console.log(error);
+          if (error.message === 'Unauthorized') {
+            logout();
+          } else {
+            console.log(error)
+          }
         }
       }
       setLoading(false);

@@ -44,6 +44,12 @@ export const userDetails = async ({token}) => {
     return response.data;
   } catch (error) {
     console.log('Error while retrieving user details', error)
+
+    if (error.response && error.response.status === 401) {
+      throw Error("Unauthorized");
+    }
+
+    throw error;
   }
 }
 
