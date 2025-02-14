@@ -5,6 +5,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { getConversations, search } from "../endpoints";
 import ConversationSpace from "../components/ConversationSpace";
 import SearchBar from "../components/SearchBar";
+import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/solid";
 
 const Dashboard = () => {
   const [conversations, setConversations] = useState([]);
@@ -12,6 +13,8 @@ const Dashboard = () => {
   const [selectedConversation, setSelectedConversation] = useState();
   const [conversationOpen, setConversationOpen] = useState(false);
   const [searchedUser, setSearchedUser] = useState(null);
+  const [isNavOpen, setIsNavOpen] = useState(false);
+  const [showList, setShowList] = useState(true);
 
   console.log(token);
 
@@ -45,30 +48,50 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-around h-screen">
-        <div className="w-28 md:w-28 lg:w-28 h-full fixed md:relative flex-shrink-0">
-          {/* Navbar section */}
+      {/* Mobile Navigation Overlay */}
+      {isNavOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={() => setIsNavOpen(false)}
+        ></div>
+      )}
+
+      <div className="flex h-screen relative">
+
+        {/* Navbar - Always visible on desktop, toggled on mobile */}
+        <div className={`fixed md:relative w-28 shadow-md h-full z-30 transition-transform transform ${isNavOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}>
           <Navbar />
         </div>
 
-        <div className="">
-          {/* Contacts List - Show only if no conversation is open on small screens */}
-          <div className={`h-full md:basis-1/3 bx-sx p-4 ${conversationOpen ? 'hidden md:block' : 'block'}`}>
+        {/* Mobile Menu Button */}
+        <button className="absolute top-4 left-4 md:hidden z-30" onClick={() => setIsNavOpen(true)}>
+          <Bars3Icon className="w-6 h-6" />
+        </button>
+
+        {/* Main Content Wrapper */}
+        <div className="flex flex-grow overflow-hidden md:space-x-4">
+
+          {/* Conversations List - Always visible on desktop, toggle on mobile */}
+          <div className={`w-full md:w-1/3 p-4 shadow-md md:flex flex-col ${!showList ? "hidden md:flex" : "block"}`}>
             <SearchBar onUserSelect={setSearchedUser} />
             <ConversationList
               conversations={conversations}
-              onConversationSelect={handleConversationSelected}
+              onConversationSelect={(conversation) => {
+                handleConversationSelected(conversation);
+                setShowList(false); // Hide list and show chat on mobile
+              }}
             />
           </div>
-        </div>
 
-        <div className="flex flex-col md:flex-row justify-around flex-grow">
-          {/* Message / Conversation Space - Show only when a conversation is selected on small screens */}
-          <div className={`w-full md:flex-grow  ${conversationOpen ? 'block' : 'hidden'} md:block`}>
+          {/* Chat Space - Always visible on desktop, toggle on mobile */}
+          <div className={`w-full md:flex-grow p-4 shadow-md  ${showList ? "hidden md:flex" : "block"}`}>
             {conversationOpen ? (
               <ConversationSpace
                 conversation={selectedConversation}
-                handleClose={handleClose}
+                handleClose={() => {
+                  handleClose();
+                  setShowList(true); // Return to conversation list on mobile
+                }}
                 newUser={searchedUser}
                 setSelectedConversation={setSelectedConversation}
                 setConversations={setConversations}
@@ -79,6 +102,7 @@ const Dashboard = () => {
               </div>
             )}
           </div>
+
         </div>
       </div>
     </>

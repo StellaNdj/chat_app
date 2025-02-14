@@ -19,7 +19,7 @@ const SearchBar = ({onUserSelect}) => {
   }
 
   return (
-    <div className="p-2">
+    <div className="">
       <form onSubmit={handleSearch} className="flex">
         <input
           type="text"
