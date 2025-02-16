@@ -13,6 +13,10 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
   });
   const [socket, setSocket] = useState(null);
   const [profile, setProfile] = useState();
+  const [typingUser, setTypingUser] = useState(null);
+
+  let typingTimeout;
+  const TYPING_DELAY = 3000;
 
   const getProfile = async ({token}) => {
     const data = await publicProfiles({token: token, username: conversation.other_user.map((user) => user.username)});
@@ -60,10 +64,17 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         }
 
         if (data.type === "read_receipt") {
-          console.log(`${data.user} has read the messages.`);
           setMessages((prevMessages) =>
             prevMessages.map(msg => ({ ...msg, is_read: true }))
           );
+        }
+
+        if (data.type === 'typing') {
+          if (data.is_typing) {
+            setTypingUser(data.user);
+          } else {
+            setTypingUser(null);
+          }
         }
       };
 
@@ -117,6 +128,19 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
     setFormData({ ...formData, content: '' });
   }
 
+  const handleTyping = () => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({type: 'typing', user: user[0].username, is_typing: true}));
+
+      clearTimeout(typingTimeout);
+
+      typingTimeout = setTimeout(() => {
+        socket.send(JSON.stringify({type: 'typing', user: user[0].username, is_typing: false}));
+      }, TYPING_DELAY);
+    }
+  }
+
+
   return (
     <div>
       {!profile && newUser ? (
@@ -144,6 +168,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       )}
 
       <div className="h-[29rem] p-4 mr-2 space-y-4 overflow-y-auto">
+
         {messages.map((message) => (
           <div key={message.id} className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
             <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
@@ -151,6 +176,11 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             </p>
           </div>
         ))}
+        <div className='mb-8'>
+          {typingUser && (
+              <p className="text-sm text-gray-500">{typingUser} is typing...</p>
+          )}
+        </div>
       </div>
 
       <div className="sticky bottom-0 p-2 border-t">
@@ -158,7 +188,10 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           <input
             name="content"
             value={formData.content}
-            onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+            onChange={(e) => {
+              setFormData({ ...formData, content: e.target.value });
+              handleTyping();
+            }}
             placeholder="Type your message..."
             className="border p-1 rounded-lg w-full"
           />
