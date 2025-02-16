@@ -18,9 +18,11 @@ class Conversation(models.Model):
 class Message(models.Model):
     conversation = models.ForeignKey(Conversation, related_name='messages', on_delete=models.CASCADE, null=True, blank=True)
     sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
-    content = models.TextField()
+    content = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
+    reactions = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
         return f"{self.sender.username}: {self.content[:20]} ({self.timestamp})"

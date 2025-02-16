@@ -38,8 +38,52 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 
     async def receive(self, text_data):
-        print("WebSocket message received:", text_data)
         data = json.loads(text_data)
+        message_type = data.get('type')
+
+        if message_type == "chat_message":
+            message_content = data.get('message', '')
+            sender_id = data['sender']
+            image_url = data.get('image', None)
+
+            # Save the message to the db
+            converation = await self.get_conversation(self.room_name)
+            sender = await self.get_user(sender_id)
+
+            message = await self.create_message(converation, sender, message_content, image_url)
+
+            # Broadcast message
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': {
+                        'type': 'chat_message',
+                        'content': message.content,
+                        'sender': message.sender.id,
+                        'timestamp': message.timestamp.isoformat(),
+                        'image': message.image.url if message.image else None
+                    },
+                }
+            )
+        elif message_type == "reaction":
+            message_id = data['message_id']
+            reaction = data['reaction']
+            user_id = data['user_id']
+
+            # Update the reaction
+            await self.update_reaction(message_id, user_id, reaction)
+
+            # Broadcast the updated reaction
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'reaction_update',
+                    'message_id': message_id,
+                    'reaction': reaction,
+                    'user_id': user_id
+                }
+            )
 
         # Handle typing
         if data.get("type") == 'typing':
@@ -53,31 +97,43 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
             return
 
-        # Handle chat message
-        message_content = data['message']
-        sender_id = data['sender']
+        # # Handle chat message
+        # message_content = data['message']
+        # sender_id = data['sender']
 
-        # Save the message to the database
-        conversation = await self.get_conversation(self.room_name)
-        sender = await self.get_user(sender_id)
+        # # Save the message to the database
+        # conversation = await self.get_conversation(self.room_name)
+        # sender = await self.get_user(sender_id)
 
-        message = await self.create_message(conversation, sender, message_content)
+        # message = await self.create_message(conversation, sender, message_content)
 
-        print("Broadcasting message:", message.content)
+        # print("Broadcasting message:", message.content)
 
-        # Broadcast the message to the group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': {
-                    'type': 'chat_message', # Specify type
-                    'content': message.content,
-                    'sender': message.sender.id,
-                    'timestamp': message.timestamp.isoformat(),
-                },
-            }
-        )
+        # # Broadcast the message to the group
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'chat_message',
+        #         'message': {
+        #             'type': 'chat_message', # Specify type
+        #             'content': message.content,
+        #             'sender': message.sender.id,
+        #             'timestamp': message.timestamp.isoformat(),
+        #         },
+        #     }
+        # )
+
+    async def update_reaction(self, message_id, user_id, reaction):
+        message = await database_sync_to_async(Message.objects.get)(id=message_id)
+        reactions = message.reactions
+
+        if reaction:
+            reactions[str(user_id)] = reaction  # Add/update reaction
+        else:
+            reactions.pop(str(user_id), None)  # Remove reaction
+
+        message.reactions = reactions
+        await database_sync_to_async(message.save)()
 
     async def typing_status(self, event):
         # Broadcast typing status to all members
