@@ -21,7 +21,7 @@ class Message(models.Model):
     content = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
-    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
+    image = models.ImageField(upload_to='chat_images', blank=True, null=True)
     reactions = models.JSONField(default=dict, blank=True)
 
     def __str__(self):

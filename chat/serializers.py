@@ -58,9 +58,16 @@ class PublicProfileUserSerializer(serializers.ModelSerializer):
 
 # Message serializer
 class MessageSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ['id', 'sender', 'content', 'image_url', 'timestamp', 'is_read', 'reactions']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
 
 # Conversation serializer
 class ConversationSerializer(serializers.ModelSerializer):

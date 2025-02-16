@@ -86,7 +86,10 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    if (!formData.content.trim()) return;
+    const testImageUrl = "chat_images/aw.webp";
+    console.log(testImageUrl);
+
+    if (!formData.content.trim() && !formData.image) return;
 
     // New message
       const newMessage = {
@@ -94,6 +97,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         content: formData.content,
         sender: user[0].id,
         timestamp: new Date().toISOString(),
+        image: formData.image ? URL.createObjectURL(formData.image) : null,
       }
 
     if (newUser) {
@@ -105,12 +109,30 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         setMessages([response.content]);
       }
     } else if (socket) {
-      socket.send(JSON.stringify({
+
+      const messageData = {
         type: "chat_message",
         message: formData.content,
-        sender: user[0].id
-      }));
-    }
+        sender: user[0].id,
+        image: testImageUrl
+      };
+
+        // if (formData.image) {
+        //   // Convert image to Base64
+        //   const reader = new FileReader();
+        //   reader.readAsDataURL(formData.image);
+        //   reader.onload = () => {
+        //       messageData.image = reader.result; // Send Base64 string
+        //       socket.send(JSON.stringify(messageData));
+        //   };
+        // } else {
+        //     socket.send(JSON.stringify(messageData));
+        // }
+
+      // setMessages((prevMessages) => [...prevMessages, newMessage]);
+      // setFormData({ ...formData, content: '', image: null });
+      socket.send(JSON.stringify(messageData))
+    };
 
     // Update Dashboard conversation list
     setConversations((prevConversations) => {
@@ -174,6 +196,9 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
               {message.content}
             </p>
+            {message.image_url && (
+              <img src={`http://localhost:8000/api${message.image_url}`} alt="Media sent" className="w-40 h-40 rounded-lg object-cover mt-2" />
+            )}
           </div>
         ))}
         <div className='mb-8'>

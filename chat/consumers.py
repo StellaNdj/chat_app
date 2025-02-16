@@ -49,7 +49,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Save the message to the db
             converation = await self.get_conversation(self.room_name)
             sender = await self.get_user(sender_id)
-
+            
+                # Supporting images as messages
             message = await self.create_message(converation, sender, message_content, image_url)
 
             # Broadcast message
@@ -191,11 +192,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return User.objects.get(id=user_id)
 
     @database_sync_to_async
-    def create_message(self, conversation, sender, content):
+    def create_message(self, conversation, sender, content, image=None):
         return Message.objects.create(
             conversation=conversation,
             sender=sender,
-            content=content
+            content=content,
+            image=image
         )
 @database_sync_to_async
 def set_user_online_status(user, online):
