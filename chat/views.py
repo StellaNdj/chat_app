@@ -102,8 +102,6 @@ class MessageViewSet(viewsets.ModelViewSet):
         content = request.data.get('content')
         sender = request.user
 
-        # print(participants)
-
         if not content:
             return Response({"error": "Content must not be empty"}, status=400)
 
@@ -113,13 +111,12 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         # Validate participants
         participants_users = User.objects.filter(id__in=participants).distinct()
-        # print(participants_users)
+
         if participants_users.count() < 2:
             return Response({"error": "A conversation requires at least two participants"}, status=400)
 
         # Find or create a conversation
         conversation = self.get_or_create_conversation(participants_users)
-        # print(conversation)
 
         # Create a message
         message = Message.objects.create(

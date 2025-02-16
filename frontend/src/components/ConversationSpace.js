@@ -86,9 +86,6 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
-    const testImageUrl = "chat_images/aw.webp";
-    console.log(testImageUrl);
-
     if (!formData.content.trim() && !formData.image) return;
 
     // New message
@@ -114,24 +111,23 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         type: "chat_message",
         message: formData.content,
         sender: user[0].id,
-        image: testImageUrl
       };
 
-        // if (formData.image) {
-        //   // Convert image to Base64
-        //   const reader = new FileReader();
-        //   reader.readAsDataURL(formData.image);
-        //   reader.onload = () => {
-        //       messageData.image = reader.result; // Send Base64 string
-        //       socket.send(JSON.stringify(messageData));
-        //   };
-        // } else {
-        //     socket.send(JSON.stringify(messageData));
-        // }
+        if (formData.image) {
+          // Convert image to Base64
+          const reader = new FileReader();
+          reader.readAsDataURL(formData.image);
+          reader.onload = () => {
+              messageData.image = reader.result; // Send Base64 string
+              socket.send(JSON.stringify(messageData));
+          };
+        } else {
+            socket.send(JSON.stringify(messageData));
+        }
 
-      // setMessages((prevMessages) => [...prevMessages, newMessage]);
-      // setFormData({ ...formData, content: '', image: null });
-      socket.send(JSON.stringify(messageData))
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setFormData({ ...formData, content: '', image: null });
+      // socket.send(JSON.stringify(messageData))
     };
 
     // Update Dashboard conversation list
@@ -220,10 +216,35 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             placeholder="Type your message..."
             className="border p-1 rounded-lg w-full"
           />
+
+          {/* File Input for Image */}
+          <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
+              className="hidden"
+              id="image-upload"
+          />
+          <label htmlFor="image-upload" className="cursor-pointer p-2 bg-gray-200 rounded">
+              📷
+          </label>
+
           <button className="p-1 bg-blue-600 text-white rounded-lg">
             <PaperAirplaneIcon className="size-6 cursor-pointer" />
           </button>
         </form>
+        {/* Drag & Drop */}
+        <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+                e.preventDefault();
+                const file = e.dataTransfer.files[0];
+                if (file) setFormData({ ...formData, image: file });
+            }}
+            className="border p-4 mt-2 text-center"
+        >
+            Drag & drop an image here
+        </div>
       </div>
     </div>
   );
