@@ -19,16 +19,16 @@ const SearchBar = ({onUserSelect}) => {
   }
 
   return (
-    <div className="">
+    <div className="mt-8 md:mt-1">
       <form onSubmit={handleSearch} className="flex">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for users..."
-          className="border rounded-lg p-2 flex-grow"
+          className="border rounded-lg p-1 flex-grow"
         />
-        <button type="submit" className="p-2 bg-blue-600 text-white rounded-lg">
+        <button type="submit" className="p-1 bg-blue-600 text-white rounded-lg">
           Search
         </button>
       </form>

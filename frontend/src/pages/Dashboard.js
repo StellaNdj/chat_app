@@ -63,16 +63,16 @@ const Dashboard = () => {
           <Navbar />
         </div>
 
+
         {/* Mobile Menu Button */}
         <button className="absolute top-4 left-4 md:hidden z-30" onClick={() => setIsNavOpen(true)}>
           <Bars3Icon className="w-6 h-6" />
         </button>
-
         {/* Main Content Wrapper */}
         <div className="flex flex-grow overflow-hidden md:space-x-4">
 
           {/* Conversations List - Always visible on desktop, toggle on mobile */}
-          <div className={`w-full md:w-1/3 p-4 shadow-md md:flex flex-col ${!showList ? "hidden md:flex" : "block"}`}>
+          <div className={`w-full md:w-5/12 p-4 shadow-md md:flex flex-col ${!showList ? "hidden md:flex" : "block"}`}>
             <SearchBar onUserSelect={setSearchedUser} />
             <ConversationList
               conversations={conversations}
@@ -84,7 +84,7 @@ const Dashboard = () => {
           </div>
 
           {/* Chat Space - Always visible on desktop, toggle on mobile */}
-          <div className={`w-full md:flex-grow p-4 shadow-md  ${showList ? "hidden md:flex" : "block"}`}>
+          <div className={`w-full md:flex-grow p-4  ${showList ? "hidden md:flex" : "block"}`}>
             {conversationOpen ? (
               <ConversationSpace
                 conversation={selectedConversation}
