@@ -77,6 +77,12 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             setTypingUser(null);
           }
         }
+
+        if (data.type === "delete_message") {
+          setMessages((prevMessages) =>
+              prevMessages.filter((msg) => msg.id !== data.message_id)
+          );
+      }
       };
 
       return () => ws.close();

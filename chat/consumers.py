@@ -167,7 +167,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         ))
 
     async def delete_message_ws(self, event):
-        await self.send(text_data=json.dumps({"type": "delete_message", "message_id": event["message_id"]}))
+        await self.send(text_data=json.dumps({
+        "type": "delete_message",
+        "message_id": event["message_id"]
+    }))
 
     # Database operations must use `database_sync_to_async`
     @database_sync_to_async
@@ -188,9 +191,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
     @database_sync_to_async
     def delete_message(self, message_id):
-        message = Message.objects.filter(id=message_id)
-        print(message)
-        if message == self.scope["user"]:
+        message = Message.objects.get(id=message_id)
+        if message.sender.id == self.scope["user"].id:
             message.delete()
 
 @database_sync_to_async

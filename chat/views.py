@@ -170,7 +170,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         image = request.FILES['image']
         message = Message.objects.create(sender=request.user, image=image, content="")
 
-        serializer = MessageSerializer(message, context={"request": request})  # Ensure consistent URL formatting
+        serializer = MessageSerializer(message, context={"request": request})  
         return Response(serializer.data, status=201)
 
 
