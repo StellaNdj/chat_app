@@ -1,8 +1,8 @@
 import { formatDistance } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { newMessage, publicProfiles } from '../endpoints';
+import { ArrowPathIcon, PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { newMessage, publicProfiles, uploadChatImage } from '../endpoints';
 
 const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConversation, setConversations }) => {
   const { user, token } = useContext(AuthContext);
@@ -44,6 +44,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             content: data.content,
             sender: data.sender,
             timestamp: new Date().toISOString(),
+            image: formData.image ? URL.createObjectURL(formData.image) : null,
           }
           // Update messages with the new one
           setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -97,6 +98,25 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         image: formData.image ? URL.createObjectURL(formData.image) : null,
       }
 
+    let imageUrl = null;
+
+    if (formData.image) {
+      const formDataImage = new FormData()
+      formDataImage.append('image', formData.image);
+
+      try {
+        const response = await uploadChatImage({token: token, imageFile: formDataImage})
+        if (response) {
+          console.log(response);
+          imageUrl = response.image_url
+          console.log(imageUrl)
+        }
+
+      } catch (error) {
+        console.log('Error while uploading an image', error)
+      }
+    }
+
     if (newUser) {
       // Start a new conversation by sending the first message
       const response = await newMessage({ token, participants: [newUser.id], content: formData.content });
@@ -111,23 +131,14 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         type: "chat_message",
         message: formData.content,
         sender: user[0].id,
+        image_url: imageUrl,
       };
 
-        if (formData.image) {
-          // Convert image to Base64
-          const reader = new FileReader();
-          reader.readAsDataURL(formData.image);
-          reader.onload = () => {
-              messageData.image = reader.result; // Send Base64 string
-              socket.send(JSON.stringify(messageData));
-          };
-        } else {
-            socket.send(JSON.stringify(messageData));
-        }
+      socket.send(JSON.stringify(messageData));
 
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       setFormData({ ...formData, content: '', image: null });
-      // socket.send(JSON.stringify(messageData))
+
     };
 
     // Update Dashboard conversation list
@@ -157,6 +168,14 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       }, TYPING_DELAY);
     }
   }
+
+  const handleDeleteMessage = async (messageId) => {
+    if (socket) {
+        socket.send(JSON.stringify({ type: "delete_message", message_id: messageId }));
+    }
+
+    setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== messageId));
+};
 
 
   return (
@@ -192,9 +211,13 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
               {message.content}
             </p>
+            {message.sender === user[0].id && (
+                <button onClick={() => handleDeleteMessage(message.id)}>🗑</button>
+            )}
             {message.image_url && (
               <img src={`http://localhost:8000/api${message.image_url}`} alt="Media sent" className="w-40 h-40 rounded-lg object-cover mt-2" />
             )}
+
           </div>
         ))}
         <div className='mb-8'>

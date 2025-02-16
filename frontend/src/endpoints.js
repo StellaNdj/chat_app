@@ -191,3 +191,20 @@ export const updateGroupName = async ({token, name, conversationId}) => {
     console.log('Error while updating the name', error)
   }
 }
+
+export const uploadChatImage = async ({token, imageFile}) => {
+  try {
+    const response = await axios.post(`${APIroot}/messages/upload/`,
+      imageFile,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Error while uploading image to chat', error)
+  }
+}

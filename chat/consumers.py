@@ -44,12 +44,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if message_type == "chat_message":
             message_content = data.get('message', '')
             sender_id = data['sender']
-            image_url = data.get('image', None)
+            image_url = data.get('image_url', None)
 
             # Save the message to the db
             converation = await self.get_conversation(self.room_name)
             sender = await self.get_user(sender_id)
-            
+
                 # Supporting images as messages
             message = await self.create_message(converation, sender, message_content, image_url)
 
@@ -63,7 +63,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'content': message.content,
                         'sender': message.sender.id,
                         'timestamp': message.timestamp.isoformat(),
-                        'image': message.image.url if message.image else None
+                        'image': image_url
                     },
                 }
             )
@@ -98,31 +98,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
             return
 
-        # # Handle chat message
-        # message_content = data['message']
-        # sender_id = data['sender']
+        # Handle deleting message
+        if data.get("type") == "delete_message":
+            message_id = data["message_id"]
+            await self.delete_message(message_id)
+        else:
+            await self.send_chat_message(data)
 
-        # # Save the message to the database
-        # conversation = await self.get_conversation(self.room_name)
-        # sender = await self.get_user(sender_id)
 
-        # message = await self.create_message(conversation, sender, message_content)
 
-        # print("Broadcasting message:", message.content)
-
-        # # Broadcast the message to the group
-        # await self.channel_layer.group_send(
-        #     self.room_group_name,
-        #     {
-        #         'type': 'chat_message',
-        #         'message': {
-        #             'type': 'chat_message', # Specify type
-        #             'content': message.content,
-        #             'sender': message.sender.id,
-        #             'timestamp': message.timestamp.isoformat(),
-        #         },
-        #     }
-        # )
 
     async def update_reaction(self, message_id, user_id, reaction):
         message = await database_sync_to_async(Message.objects.get)(id=message_id)
@@ -182,6 +166,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         ))
 
+    async def delete_message_ws(self, event):
+        await self.send(text_data=json.dumps({"type": "delete_message", "message_id": event["message_id"]}))
+
     # Database operations must use `database_sync_to_async`
     @database_sync_to_async
     def get_conversation(self, room_name):
@@ -199,6 +186,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             content=content,
             image=image
         )
+    @database_sync_to_async
+    def delete_message(self, message_id):
+        message = Message.objects.filter(id=message_id)
+        print(message)
+        if message == self.scope["user"]:
+            message.delete()
+
 @database_sync_to_async
 def set_user_online_status(user, online):
     profile = UserProfile.objects.get(user=user)

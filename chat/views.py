@@ -95,6 +95,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
     queryset = Message.objects.all()
+    parser_classes = [MultiPartParser]
 
     def create(self, request, *args, **kwargs):
         # Get request data
@@ -151,6 +152,27 @@ class MessageViewSet(viewsets.ModelViewSet):
         conversation.participants.set(participants_users)
         conversation.save()
         return conversation
+
+    def destroy(self, request, *args, **kwargs):
+        message = self.get_object()
+
+        # Ensure only the sender can delete their own message
+        if message.sender != request.user:
+            return Response({"error": "You can only delete your own messages"}, status=403)
+
+        message.delete()
+        return Response({"message": "Message deleted successfully"}, status=204)
+
+    @action(detail=False, methods=['post'])
+    def upload(self, request):
+        if 'image' not in request.FILES:
+            return Response({"error": "No image provided"}, status=400)
+        image = request.FILES['image']
+        message = Message.objects.create(sender=request.user, image=image, content="")
+
+        serializer = MessageSerializer(message, context={"request": request})  # Ensure consistent URL formatting
+        return Response(serializer.data, status=201)
+
 
 
 # Conversation view
