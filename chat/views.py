@@ -167,12 +167,12 @@ class MessageViewSet(viewsets.ModelViewSet):
     def upload(self, request):
         if 'image' not in request.FILES:
             return Response({"error": "No image provided"}, status=400)
+
         image = request.FILES['image']
         message = Message.objects.create(sender=request.user, image=image, content="")
 
-        serializer = MessageSerializer(message, context={"request": request})  
+        serializer = MessageSerializer(message, context={"request": request})
         return Response(serializer.data, status=201)
-
 
 
 # Conversation view

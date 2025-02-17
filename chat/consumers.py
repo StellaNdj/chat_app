@@ -102,8 +102,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if data.get("type") == "delete_message":
             message_id = data["message_id"]
             await self.delete_message(message_id)
-        else:
-            await self.send_chat_message(data)
 
 
 

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Message, Conversation, UserProfile
 from django.contrib.auth.models import User
+from django.conf import settings
 
 # User serializer
 class UserSerializer(serializers.ModelSerializer):
@@ -62,11 +63,11 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'content', 'image_url', 'timestamp', 'is_read', 'reactions']
+        fields = ['id', 'sender', 'content', 'image', 'image_url', 'timestamp', 'is_read', 'reactions']
 
     def get_image_url(self, obj):
         if obj.image:
-            return obj.image.url
+           return obj.image.url.replace(f"{settings.MEDIA_URL}{settings.MEDIA_URL.lstrip('/')}", settings.MEDIA_URL)
         return None
 
 # Conversation serializer

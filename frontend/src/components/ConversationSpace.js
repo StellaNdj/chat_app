@@ -263,7 +263,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           </button>
         </form>
         {/* Drag & Drop */}
-        <div
+        {/* <div
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
                 e.preventDefault();
@@ -273,7 +273,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             className="border p-4 mt-2 text-center"
         >
             Drag & drop an image here
-        </div>
+        </div> */}
       </div>
     </div>
   );
