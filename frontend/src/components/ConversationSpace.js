@@ -44,7 +44,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             content: data.content,
             sender: data.sender,
             timestamp: new Date().toISOString(),
-            image: formData.image ? URL.createObjectURL(formData.image) : null,
+            image_url: data.image_url,
           }
           // Update messages with the new one
           setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -95,15 +95,6 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
 
     if (!formData.content.trim() && !formData.image) return;
 
-    // New message
-      const newMessage = {
-        id: Date.now(),  // Temporary ID until it syncs with the backend
-        content: formData.content,
-        sender: user[0].id,
-        timestamp: new Date().toISOString(),
-        image: formData.image ? URL.createObjectURL(formData.image) : null,
-      }
-
     let imageUrl = null;
 
     if (formData.image) {
@@ -113,15 +104,23 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       try {
         const response = await uploadChatImage({token: token, imageFile: formDataImage})
         if (response) {
-          console.log(response);
           imageUrl = response.image_url
-          console.log(imageUrl)
         }
 
       } catch (error) {
         console.log('Error while uploading an image', error)
       }
     }
+    // New message
+      const newMessage = {
+        id: Date.now(),  // Temporary ID until it syncs with the backend
+        content: formData.content,
+        sender: user[0].id,
+        timestamp: new Date().toISOString(),
+        image_url: imageUrl,
+      }
+
+
 
     if (newUser) {
       // Start a new conversation by sending the first message
@@ -141,10 +140,6 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       };
 
       socket.send(JSON.stringify(messageData));
-
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setFormData({ ...formData, content: '', image: null });
-
     };
 
     // Update Dashboard conversation list
@@ -160,7 +155,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       });
     });
 
-    setFormData({ ...formData, content: '' });
+    setFormData({ ...formData, content: '', image: null });
   }
 
   const handleTyping = () => {

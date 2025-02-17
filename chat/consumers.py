@@ -63,10 +63,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         'content': message.content,
                         'sender': message.sender.id,
                         'timestamp': message.timestamp.isoformat(),
-                        'image': image_url
+                        'image_url': image_url
                     },
                 }
             )
+
+            print("Sending message:", {
+                  'image_url': image_url
+              })
+            
         elif message_type == "reaction":
             message_id = data['message_id']
             reaction = data['reaction']
