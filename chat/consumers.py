@@ -68,14 +68,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-            print("Sending message:", {
-                  'image_url': image_url
-              })
-            
         elif message_type == "reaction":
             message_id = data['message_id']
             reaction = data['reaction']
             user_id = data['user_id']
+
+            print(f"Reaction received: {message_id}, {user_id}, {reaction}")
 
             # Update the reaction
             await self.update_reaction(message_id, user_id, reaction)
@@ -84,7 +82,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    'type': 'reaction_update',
+                    'type': 'reaction',
                     'message_id': message_id,
                     'reaction': reaction,
                     'user_id': user_id
@@ -109,9 +107,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.delete_message(message_id)
 
 
-
-
     async def update_reaction(self, message_id, user_id, reaction):
+        print(f"Updating reaction for message {message_id} by user {user_id}")
         message = await database_sync_to_async(Message.objects.get)(id=message_id)
         reactions = message.reactions
 
@@ -121,7 +118,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
             reactions.pop(str(user_id), None)  # Remove reaction
 
         message.reactions = reactions
-        await database_sync_to_async(message.save)()
+        await database_sync_to_async(message.save)(update_fields=['reactions'])
+
+    async def reaction(self, event):
+        await self.send(text_data=json.dumps({
+            'type': 'reaction',
+            'message_id': event['message_id'],
+            'reaction': event['reaction'],
+            'user_id': event['user_id']
+        }))
+
 
     async def typing_status(self, event):
         # Broadcast typing status to all members

@@ -45,6 +45,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             sender: data.sender,
             timestamp: new Date().toISOString(),
             image_url: data.image_url,
+            reactions: {},
           }
           // Update messages with the new one
           setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -82,7 +83,24 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           setMessages((prevMessages) =>
               prevMessages.filter((msg) => msg.id !== data.message_id)
           );
-      }
+        }
+
+        if (data.type === "reaction") {
+          console.log("Updating reaction for message:", data.message_id, "User:", data.user_id, "Reaction:", data.reaction);
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg.id === data.message_id
+              ? {
+                ...msg,
+                reactions: data.reaction
+                  ? { ...msg.reactions, [data.user_id]: data.reaction }  // Add/update reaction
+                  : Object.fromEntries(                                 // Remove reaction
+                      Object.entries(msg.reactions).filter(([userId]) => userId !== String(data.user_id))
+                    )
+              } : msg
+            )
+          )
+        }
       };
 
       return () => ws.close();
@@ -118,6 +136,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         sender: user[0].id,
         timestamp: new Date().toISOString(),
         image_url: imageUrl,
+        reactions: {}
       }
 
 
@@ -176,7 +195,19 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
     }
 
     setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== messageId));
-};
+  };
+
+  const sendReaction = (messageId, reaction) => {
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      const reactionData = {
+        type: "reaction",
+        message_id: messageId,
+        reaction: reaction,
+        user_id: user[0].id,
+      };
+      socket.send(JSON.stringify(reactionData));
+    }
+  };
 
 
   return (
@@ -208,10 +239,24 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       <div className="h-[29rem] p-4 mr-2 space-y-4 overflow-y-auto">
 
         {messages.map((message) => (
-          <div key={message.id} className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
+          <div
+            key={message.id}
+            className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}
+            onDoubleClick={() =>
+              {console.log("Double click detected on message:", message.id);
+              sendReaction(message.id, "❤️")}
+            }
+          >
             <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
               {message.content}
             </p>
+            {/* Reaction Display */}
+            {message.reactions && Object.values(message.reactions).length > 0 && (
+              <div className="text-sm mt-1">
+                {Object.values(message.reactions).map((reaction, index) => (
+                  <span key={index} className="mr-1">{reaction}</span>
+                ))}
+              </div>)}
             {message.sender === user[0].id && (
                 <button onClick={() => handleDeleteMessage(message.id)}>🗑</button>
             )}
