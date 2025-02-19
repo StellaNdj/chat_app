@@ -1,8 +1,8 @@
-import { formatDistance } from 'date-fns';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import { ArrowPathIcon, PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { newMessage, publicProfiles, uploadChatImage } from '../endpoints';
+import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { publicProfiles, uploadChatImage } from '../endpoints';
+import MessageActions from './MessageActions';
 
 const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConversation, setConversations }) => {
   const { user, token } = useContext(AuthContext);
@@ -241,15 +241,17 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}
-            onDoubleClick={() =>
-              {console.log("Double click detected on message:", message.id);
-              sendReaction(message.id, "❤️")}
-            }
-          >
-            <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
-              {message.content}
-            </p>
+            className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
+            <div className='flex'>
+              <MessageActions
+                messageId={message.id}
+                onReact={sendReaction}
+                onDelete={handleDeleteMessage}
+              />
+              <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
+                {message.content}
+              </p>
+            </div>
             {/* Reaction Display */}
             {message.reactions && Object.values(message.reactions).length > 0 && (
               <div className="text-sm mt-1">
@@ -257,9 +259,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
                   <span key={index} className="mr-1">{reaction}</span>
                 ))}
               </div>)}
-            {message.sender === user[0].id && (
-                <button onClick={() => handleDeleteMessage(message.id)}>🗑</button>
-            )}
+
             {message.image_url && (
               <img src={`http://localhost:8000/api${message.image_url}`} alt="Media sent" className="w-40 h-40 rounded-lg object-cover mt-2" />
             )}
