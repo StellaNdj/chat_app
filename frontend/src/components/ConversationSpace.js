@@ -255,7 +255,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           <div
             key={message.id}
             className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
-            <div className='flex items-center'>
+            <div className={`flex items-center ${message.sender === user[0].id ? "" : "flex-row-reverse"}`}>
               <div className=''>
                 <MessageActions
                   messageId={message.id}
