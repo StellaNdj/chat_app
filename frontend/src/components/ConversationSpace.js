@@ -90,16 +90,22 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           setMessages((prevMessages) =>
             prevMessages.map((msg) =>
               msg.id === data.message_id
-              ? {
-                ...msg,
-                reactions: data.reaction
-                  ? { ...msg.reactions, [data.user_id]: data.reaction }  // Add/update reaction
-                  : Object.fromEntries(                                 // Remove reaction
-                      Object.entries(msg.reactions).filter(([userId]) => userId !== String(data.user_id))
-                    )
-              } : msg
+                ? {
+                    ...msg,
+                    reactions: {
+                      ...msg.reactions,
+                      ...(data.reaction
+                        ? { [data.user_id]: data.reaction } // Add/update reaction
+                        : Object.fromEntries( // Remove reaction
+                            Object.entries(msg.reactions || {}).filter(
+                              ([userId]) => userId !== String(data.user_id)
+                            )
+                          )),
+                    },
+                  }
+                : msg
             )
-          )
+          );
         }
       };
 
@@ -197,6 +203,13 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
     setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== messageId));
   };
 
+  const handleReaction = (messageId, emoji) => {
+    const message = messages.find((msg) => msg.id === messageId);
+    const currentReaction = message?.reactions?.[user[0].id];
+    const newReaction = currentReaction === emoji ? null : emoji;
+
+    sendReaction(messageId, newReaction);
+  };
   const sendReaction = (messageId, reaction) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
       const reactionData = {
@@ -242,16 +255,19 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
           <div
             key={message.id}
             className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
-            <div className='flex'>
-              <MessageActions
-                messageId={message.id}
-                onReact={sendReaction}
-                onDelete={handleDeleteMessage}
-              />
-              <p className={`rounded-lg p-2 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
+            <div className='flex items-center'>
+              <div className=''>
+                <MessageActions
+                  messageId={message.id}
+                  onReact={handleReaction}
+                  onDelete={handleDeleteMessage}
+                />
+              </div>
+              <p className={`rounded-full px-3 py-1 w-fit ${message.sender === user[0].id ? "bg-blue-600 text-right" : "bg-gray-400"}`}>
                 {message.content}
               </p>
             </div>
+
             {/* Reaction Display */}
             {message.reactions && Object.values(message.reactions).length > 0 && (
               <div className="text-sm mt-1">
@@ -302,18 +318,6 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
             <PaperAirplaneIcon className="size-6 cursor-pointer" />
           </button>
         </form>
-        {/* Drag & Drop */}
-        {/* <div
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-                e.preventDefault();
-                const file = e.dataTransfer.files[0];
-                if (file) setFormData({ ...formData, image: file });
-            }}
-            className="border p-4 mt-2 text-center"
-        >
-            Drag & drop an image here
-        </div> */}
       </div>
     </div>
   );

@@ -112,10 +112,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = await database_sync_to_async(Message.objects.get)(id=message_id)
         reactions = message.reactions
 
-        if reaction:
-            reactions[str(user_id)] = reaction  # Add/update reaction
-        else:
-            reactions.pop(str(user_id), None)  # Remove reaction
+        if reaction:  # Add/update reaction
+            reactions[str(user_id)] = reaction
+        elif str(user_id) in reactions:  # Remove reaction
+            del reactions[str(user_id)]
 
         message.reactions = reactions
         await database_sync_to_async(message.save)(update_fields=['reactions'])
