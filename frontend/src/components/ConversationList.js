@@ -4,7 +4,7 @@ const ConversationList = ({conversations, onConversationSelect}) => {
   return(
     <>
       {conversations.map((conversation, index) =>
-        <div key={conversation.id} className={`pb-4 cursor-pointer flex w-full`} onClick={() => onConversationSelect(conversation)}>
+        <div key={conversation.id} className={`mb-4 cursor-pointer flex w-full`} onClick={() => onConversationSelect(conversation)}>
           {conversation.user_images.slice(0, 3).map((image, index) =>
             <img
               key={image.user_id}
@@ -12,10 +12,10 @@ const ConversationList = ({conversations, onConversationSelect}) => {
               style={{ left: `${index * 12}px`, zIndex: `${3 - index}` }}
             />
           )}
-          <div>
-            <div className="flex justify-between w-full">
+          <div className="w-full">
+            <div className="flex justify-between ml-1">
               {conversation.name? <h4 className="font-bold flex-grow">{conversation.name}</h4> : <h4 className="font-bold">{conversation.other_user.map((user) => user.username)}</h4> }
-              <p className='text-sm text-gray-400'>{conversation.last_message?.timestamp
+              <p className='text-xs text-gray-400'>{conversation.last_message?.timestamp
                 ? formatDistance(new Date(conversation.last_message.timestamp), new Date(), { addSuffix: true })
                 : "Now"}</p>
             </div>

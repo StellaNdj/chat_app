@@ -249,7 +249,7 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         </div>
       )}
 
-      <div className="h-[29rem] p-4 mr-2 space-y-4 overflow-y-auto">
+      <div className="h-[28rem] p-4 mr-2 space-y-4 overflow-y-auto">
         {messages.map((message) => (
           <div
             key={message.id}
@@ -290,8 +290,8 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
 
 
       {/* Input space */}
-      <div className="sticky bottom-2 p-1 border rounded-full m-2 ">
-        <form onSubmit={handleSendMessage} className="flex justify-between p-1 ">
+      <div className="sticky bottom-2 border rounded-full m-2 bg-inherit ">
+        <form onSubmit={handleSendMessage} className="flex justify-between">
           <input
             name="content"
             value={formData.content}

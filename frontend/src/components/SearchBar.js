@@ -27,7 +27,7 @@ const SearchBar = ({onUserSelect}) => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search..."
-          className="flex-grow"
+          className="flex-grow bg-transparent"
         />
         <button type="submit" className="p-1 bg-blue-600 text-white rounded-full">
           <MagnifyingGlassIcon className="size-4"/>
