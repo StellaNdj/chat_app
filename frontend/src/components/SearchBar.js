@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import { search } from "../endpoints";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const SearchBar = ({onUserSelect}) => {
   const [query, setQuery] = useState("");
@@ -19,17 +20,17 @@ const SearchBar = ({onUserSelect}) => {
   }
 
   return (
-    <div className="mt-8 md:mt-1">
-      <form onSubmit={handleSearch} className="flex">
+    <div className="border rounded-full h-9 mb-8">
+      <form onSubmit={handleSearch} className="flex justify-between p-1">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for users..."
-          className="border rounded-lg p-1 flex-grow"
+          placeholder="Search..."
+          className="flex-grow"
         />
-        <button type="submit" className="p-1 bg-blue-600 text-white rounded-lg">
-          Search
+        <button type="submit" className="p-1 bg-blue-600 text-white rounded-full">
+          <MagnifyingGlassIcon className="size-4"/>
         </button>
       </form>
 

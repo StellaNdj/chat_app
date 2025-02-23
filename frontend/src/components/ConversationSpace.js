@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
-import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, PhotoIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { publicProfiles, uploadChatImage } from '../endpoints';
 import MessageActions from './MessageActions';
 
@@ -250,13 +250,12 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
       )}
 
       <div className="h-[29rem] p-4 mr-2 space-y-4 overflow-y-auto">
-
         {messages.map((message) => (
           <div
             key={message.id}
             className={`grid ${message.sender === user[0].id ? "justify-end" : "justify-start"}`}>
-            <div className={`flex items-center ${message.sender === user[0].id ? "" : "flex-row-reverse"}`}>
-              <div className=''>
+            <div className={`flex items-center ${message.sender === user[0].id ? "" : "flex-row-reverse"} group`}>
+              <div className='hidden group-hover:block'>
                 <MessageActions
                   messageId={message.id}
                   onReact={handleReaction}
@@ -289,8 +288,10 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
         </div>
       </div>
 
-      <div className="sticky bottom-0 p-2 border-t">
-        <form onSubmit={handleSendMessage} className="flex justify-between">
+
+      {/* Input space */}
+      <div className="sticky bottom-2 p-1 border rounded-full m-2 ">
+        <form onSubmit={handleSendMessage} className="flex justify-between p-1 ">
           <input
             name="content"
             value={formData.content}
@@ -298,8 +299,8 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
               setFormData({ ...formData, content: e.target.value });
               handleTyping();
             }}
-            placeholder="Type your message..."
-            className="border p-1 rounded-lg w-full"
+            placeholder="  Your message..."
+            className="w-full bg-transparent"
           />
 
           {/* File Input for Image */}
@@ -310,11 +311,11 @@ const ConversationSpace = ({ conversation, handleClose, newUser, setSelectedConv
               className="hidden"
               id="image-upload"
           />
-          <label htmlFor="image-upload" className="cursor-pointer p-2 bg-gray-200 rounded">
-              📷
+          <label htmlFor="image-upload" className="cursor-pointer p-2">
+              <PhotoIcon className="size-6"/>
           </label>
 
-          <button className="p-1 bg-blue-600 text-white rounded-lg">
+          <button className="p-1 text-blue-600">
             <PaperAirplaneIcon className="size-6 cursor-pointer" />
           </button>
         </form>

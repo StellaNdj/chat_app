@@ -36,8 +36,8 @@ const MessageActions = ({ messageId, handleReaction, onDelete }) => {
   return (
     <div className="flex">
       {/* Action button */}
-      <div className="relative group" ref={actionRef}>
-        <button onClick={() => setShowActions(!showActions)} className="relative">
+      <div className="relative" ref={actionRef}>
+        <button onClick={() => setShowActions(!showActions)} className="relative group">
           <EllipsisVerticalIcon className="size-4 hover:bg-gray-200 rounded-full"/>
         </button>
 
@@ -56,8 +56,8 @@ const MessageActions = ({ messageId, handleReaction, onDelete }) => {
 
 
       {/* Reaction button */}
-      <div className="relative group" ref={reactionRef}>
-        <button onClick={() => setShowReactions(!showReactions)} className="relative">
+      <div className="relative" ref={reactionRef}>
+        <button onClick={() => setShowReactions(!showReactions)} className="relative group">
           <FaceSmileIcon className="size-4 hover:bg-gray-200 rounded-full"/>
         </button>
 
